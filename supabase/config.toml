@@ -1,0 +1,16 @@
+project_id = "sportsuite-360"
+
+[functions.create-membership]
+verify_jwt = true
+[functions.renew-membership]
+verify_jwt = true
+[functions.cancel-membership]
+verify_jwt = true
+[functions.register-payment]
+verify_jwt = true
+[functions.void-payment]
+verify_jwt = true
+[functions.attendance-check-in]
+verify_jwt = true
+[functions.attendance-check-out]
+verify_jwt = true
