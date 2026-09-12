@@ -57,6 +57,19 @@ npm run typecheck
 npm run build
 ```
 
+## Formato del código
+
+Prettier y sus plugins para PostgreSQL/PL/pgSQL y TOML están incluidos como dependencias de desarrollo. Después de `npm install`, ejecuta:
+
+```bash
+npm run format
+npm run format:check
+```
+
+`format` aplica el formato y `format:check` comprueba los archivos sin modificarlos. La configuración compartida está en `.prettierrc.json`; `.prettierignore` excluye dependencias, archivos generados, secretos y estado local de Supabase.
+
+En VS Code, abre la carpeta del repositorio e instala la extensión recomendada **Prettier – Code formatter** (`esbenp.prettier-vscode`). Los ajustes de `.vscode/settings.json` activan el formato al guardar, también para SQL y TOML. Las instrucciones de `AGENTS.md` requieren usar esta configuración en futuros cambios.
+
 ## Despliegue en Vercel
 
 1. Importa este repositorio en Vercel.

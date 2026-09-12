@@ -10,18 +10,28 @@ export async function proxy(request: NextRequest) {
   const supabase = createServerClient(url, key, {
     cookies: {
       getAll: () => request.cookies.getAll(),
-      setAll: (values: { name: string; value: string; options?: CookieOptions }[]) => {
+      setAll: (
+        values: { name: string; value: string; options?: CookieOptions }[],
+      ) => {
         values.forEach(({ name, value }) => request.cookies.set(name, value));
         response = NextResponse.next({ request });
-        values.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+        values.forEach(({ name, value, options }) =>
+          response.cookies.set(name, value, options),
+        );
       },
     },
   });
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const isLogin = request.nextUrl.pathname.startsWith("/login");
-  if (!user && !isLogin) return NextResponse.redirect(new URL("/login", request.url));
-  if (user && isLogin) return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (!user && !isLogin)
+    return NextResponse.redirect(new URL("/login", request.url));
+  if (user && isLogin)
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   return response;
 }
 
-export const config = { matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"] };
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};

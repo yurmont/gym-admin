@@ -1,7 +1,11 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./features/**/*.{ts,tsx}"],
+  content: [
+    "./app/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./features/**/*.{ts,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
@@ -11,10 +15,10 @@ export default {
         mint: "#0FC98A",
         sun: "#FFA51F",
         accent: "#FF3D5A",
-        cyan: "#12C4E0"
+        cyan: "#12C4E0",
       },
-      boxShadow: { panel: "0 16px 45px rgba(7,11,18,.08)" }
-    }
+      boxShadow: { panel: "0 16px 45px rgba(7,11,18,.08)" },
+    },
   },
-  plugins: []
+  plugins: [],
 } satisfies Config;

@@ -1,5 +1,5 @@
 {
-  "name": "sportsuite-360",
+  "name": "gym-admin",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write . --ignore-unknown",
+    "format:check": "prettier --check . --ignore-unknown"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -29,6 +31,9 @@
     "@types/react-dom": "^19.0.3",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.1",
+    "prettier": "3.9.6",
+    "prettier-plugin-sql-cst": "0.22.1",
+    "prettier-plugin-toml": "2.0.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3"
   }

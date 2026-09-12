@@ -1,4 +1,4 @@
-project_id = "sportsuite-360"
+project_id = "gym-admin"
 
 [functions.create-membership]
 verify_jwt = true
