@@ -26,11 +26,11 @@ const schema = z.object({
 });
 type Values = z.infer<typeof schema>;
 const colors: Record<string, string> = {
-  activo: "bg-emerald-50 text-emerald-700",
-  moroso: "bg-amber-50 text-amber-700",
-  congelado: "bg-cyan-50 text-cyan-700",
-  inactivo: "bg-slate-100 text-slate-600",
-  baja: "bg-red-50 text-red-700",
+  activo: "border-mint/20 bg-mintSoft text-mint",
+  moroso: "border-sun/30 bg-yellow-50 text-yellow-700",
+  congelado: "border-tech/20 bg-blue-50 text-tech",
+  inactivo: "border-slate-200 bg-slate-100 text-muted",
+  baja: "border-red-100 bg-red-50 text-accent",
 };
 
 export function MembersView() {
@@ -108,22 +108,22 @@ export function MembersView() {
             onSubmit={form.handleSubmit((v) => save.mutate(v))}
             className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5"
           >
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Nombre
               <Input className="mt-1" {...form.register("first_name")} />
               <span className="text-accent">
                 {form.formState.errors.first_name?.message}
               </span>
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Apellido
               <Input className="mt-1" {...form.register("last_name")} />
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Documento
               <Input className="mt-1" {...form.register("document_number")} />
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Teléfono
               <Input className="mt-1" {...form.register("phone")} />
             </label>
@@ -160,7 +160,7 @@ export function MembersView() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+              <thead className="bg-[#083B3A] text-xs uppercase tracking-[.14em] text-teal-50">
                 <tr>
                   <th className="px-5 py-4">Socio</th>
                   <th className="px-5 py-4">Documento</th>
@@ -171,18 +171,20 @@ export function MembersView() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {query.data.map((m) => (
-                  <tr key={m.id} className="hover:bg-slate-50">
+                  <tr key={m.id} className="transition hover:bg-brandSoft/50">
                     <td className="px-5 py-4">
-                      <p className="font-bold text-carbon">
+                      <p className="font-extrabold text-carbon">
                         {m.first_name} {m.last_name}
                       </p>
                       <p className="text-xs text-slate-400">{m.code}</p>
                     </td>
-                    <td className="px-5 py-4 text-slate-600">
+                    <td className="px-5 py-4 font-semibold text-slate-600">
                       {m.document_number || "—"}
                     </td>
                     <td className="px-5 py-4">
-                      <p>{m.phone || "—"}</p>
+                      <p className="font-semibold text-carbon">
+                        {m.phone || "—"}
+                      </p>
                       <p className="text-xs text-slate-400">{m.email}</p>
                     </td>
                     <td className="px-5 py-4">
@@ -191,7 +193,7 @@ export function MembersView() {
                     <td className="px-5 py-4 text-right">
                       <button
                         onClick={() => beginEdit(m)}
-                        className="text-xs font-bold text-brand"
+                        className="text-xs font-extrabold uppercase tracking-[.12em] text-brand"
                       >
                         Editar
                       </button>

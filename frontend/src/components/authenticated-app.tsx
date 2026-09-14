@@ -58,8 +58,10 @@ export function AuthenticatedApp({ children }: { children: React.ReactNode }) {
   if (!profile)
     return (
       <main className="grid min-h-screen place-items-center p-6">
-        <div className="max-w-lg rounded-2xl bg-white p-8 shadow-panel">
-          <p>{error || "Cargando sesión…"}</p>
+        <div className="max-w-lg rounded-lg border border-line bg-white p-8 shadow-panel">
+          <p className="font-semibold text-carbon">
+            {error || "Cargando sesión…"}
+          </p>
           {error && (
             <button
               onClick={() => {
@@ -68,7 +70,7 @@ export function AuthenticatedApp({ children }: { children: React.ReactNode }) {
                   window.location.replace("/login/");
                 });
               }}
-              className="mt-4 block text-brand"
+              className="mt-4 block text-sm font-extrabold text-brand"
             >
               Cerrar sesión
             </button>
@@ -79,7 +81,7 @@ export function AuthenticatedApp({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
       <Sidebar gymName={profile.gym_name} userName={profile.full_name} />
-      <main className="min-h-screen px-5 pb-10 pt-20 lg:ml-64 lg:px-10 lg:pt-9">
+      <main className="min-h-screen px-5 pb-10 pt-20 lg:ml-64 lg:px-8 lg:pt-8 xl:px-10">
         {children}
       </main>
     </div>

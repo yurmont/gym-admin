@@ -85,14 +85,14 @@ export function PaymentsView() {
             }}
             className="grid gap-4 md:grid-cols-2 xl:grid-cols-6"
           >
-            <label className="text-xs font-bold text-slate-600 xl:col-span-2">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted xl:col-span-2">
               Socio
               <select
                 value={form.member_id}
                 onChange={(e) =>
                   setForm({ ...form, member_id: e.target.value })
                 }
-                className="mt-1 h-11 w-full rounded-xl border border-slate-200 px-3"
+                className="mt-1 h-11 w-full rounded-md border border-line bg-white px-3 font-semibold focus:border-brand focus:ring-4 focus:ring-brand/10"
               >
                 <option value="">Pago sin socio</option>
                 {opts.data?.members?.map((m) => (
@@ -102,7 +102,7 @@ export function PaymentsView() {
                 ))}
               </select>
             </label>
-            <label className="text-xs font-bold text-slate-600 xl:col-span-2">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted xl:col-span-2">
               Membresía pendiente
               <select
                 value={form.membership_id}
@@ -119,7 +119,7 @@ export function PaymentsView() {
                       : form.amount,
                   });
                 }}
-                className="mt-1 h-11 w-full rounded-xl border border-slate-200 px-3"
+                className="mt-1 h-11 w-full rounded-md border border-line bg-white px-3 font-semibold focus:border-brand focus:ring-4 focus:ring-brand/10"
               >
                 <option value="">No vinculada</option>
                 {opts.data?.memberships?.map((m: any) => (
@@ -129,7 +129,7 @@ export function PaymentsView() {
                 ))}
               </select>
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Monto
               <Input
                 required
@@ -141,7 +141,7 @@ export function PaymentsView() {
                 className="mt-1"
               />
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Descuento
               <Input
                 type="number"
@@ -152,12 +152,12 @@ export function PaymentsView() {
                 className="mt-1"
               />
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Método
               <select
                 value={form.method}
                 onChange={(e) => setForm({ ...form, method: e.target.value })}
-                className="mt-1 h-11 w-full rounded-xl border border-slate-200 px-3"
+                className="mt-1 h-11 w-full rounded-md border border-line bg-white px-3 font-semibold focus:border-brand focus:ring-4 focus:ring-brand/10"
               >
                 <option>efectivo</option>
                 <option>tarjeta</option>
@@ -166,7 +166,7 @@ export function PaymentsView() {
                 <option>plin</option>
               </select>
             </label>
-            <label className="text-xs font-bold text-slate-600 xl:col-span-2">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted xl:col-span-2">
               Referencia
               <Input
                 value={form.reference}
@@ -193,7 +193,7 @@ export function PaymentsView() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+              <thead className="bg-[#083B3A] text-xs uppercase tracking-[.14em] text-teal-50">
                 <tr>
                   <th className="px-5 py-4">Código</th>
                   <th className="px-5 py-4">Socio</th>
@@ -206,8 +206,10 @@ export function PaymentsView() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {list.data.map((p: any) => (
-                  <tr key={p.id}>
-                    <td className="px-5 py-4 font-bold">{p.code}</td>
+                  <tr key={p.id} className="transition hover:bg-brandSoft/50">
+                    <td className="px-5 py-4 font-extrabold text-carbon">
+                      {p.code}
+                    </td>
                     <td className="px-5 py-4">
                       {p.members
                         ? `${p.members.first_name} ${p.members.last_name}`
@@ -215,13 +217,15 @@ export function PaymentsView() {
                     </td>
                     <td className="px-5 py-4">{shortDate(p.paid_at)}</td>
                     <td className="px-5 py-4 capitalize">{p.method}</td>
-                    <td className="px-5 py-4 font-black">{money(p.total)}</td>
+                    <td className="px-5 py-4 font-display text-2xl font-extrabold text-carbon">
+                      {money(p.total)}
+                    </td>
                     <td className="px-5 py-4">
                       <Badge
                         className={
                           p.status === "pagado"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-red-50 text-red-700"
+                            ? "border-mint/20 bg-mintSoft text-mint"
+                            : "border-red-100 bg-red-50 text-accent"
                         }
                       >
                         {p.status}
@@ -231,7 +235,7 @@ export function PaymentsView() {
                       {p.status === "pagado" && (
                         <button
                           onClick={() => voidPay.mutate(p.id)}
-                          className="text-xs font-bold text-accent"
+                          className="text-xs font-extrabold uppercase tracking-[.12em] text-accent"
                         >
                           Anular
                         </button>

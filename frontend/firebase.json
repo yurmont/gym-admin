@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "yurmont-gym",
     "public": "out",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "trailingSlash": true,

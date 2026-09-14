@@ -47,7 +47,7 @@ export function LoginForm() {
   };
   return (
     <form onSubmit={handleSubmit(submit)} className="mt-8 space-y-5">
-      <label className="block text-sm font-semibold text-slate-700">
+      <label className="block text-sm font-extrabold text-carbon">
         Correo
         <Input
           type="email"
@@ -60,7 +60,7 @@ export function LoginForm() {
           {errors.email?.message}
         </span>
       </label>
-      <label className="block text-sm font-semibold text-slate-700">
+      <label className="block text-sm font-extrabold text-carbon">
         Contraseña
         <Input
           type="password"
@@ -74,7 +74,7 @@ export function LoginForm() {
         </span>
       </label>
       {message && (
-        <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">
+        <p className="rounded-md border border-red-100 bg-red-50 p-3 text-sm font-semibold text-red-700">
           {message}
         </p>
       )}

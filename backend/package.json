@@ -9,6 +9,7 @@
     "start": "node --env-file-if-exists=.env dist/main.js",
     "migrate": "node --env-file-if-exists=.env scripts/migrate.mjs",
     "bootstrap": "node --env-file-if-exists=.env scripts/bootstrap.mjs",
+    "seed:demo": "node --env-file-if-exists=.env scripts/seed-demo.mjs",
     "test": "npm run build && node scripts/test.mjs",
     "check:db": "node --env-file-if-exists=.env scripts/check-db.mjs",
     "format": "node scripts/format-source.mjs && prettier --write . --ignore-unknown",

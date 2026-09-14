@@ -1,4 +1,4 @@
-# SportSuite 360 frontend
+# Gym Admin frontend
 
 Independent Next.js application with static export for Firebase Hosting. All browser code lives in src/. Configuration and environment files live in this directory.
 

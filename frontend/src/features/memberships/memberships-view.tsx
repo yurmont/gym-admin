@@ -76,7 +76,7 @@ export function MembershipsView() {
             }}
             className="grid gap-4 lg:grid-cols-6"
           >
-            <label className="text-xs font-bold text-slate-600 lg:col-span-2">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted lg:col-span-2">
               Socio
               <select
                 required
@@ -84,7 +84,7 @@ export function MembershipsView() {
                 onChange={(e) =>
                   setForm({ ...form, member_id: e.target.value })
                 }
-                className="mt-1 h-11 w-full rounded-xl border border-slate-200 bg-white px-3"
+                className="mt-1 h-11 w-full rounded-md border border-line bg-white px-3 font-semibold focus:border-brand focus:ring-4 focus:ring-brand/10"
               >
                 <option value="">Selecciona un socio</option>
                 {options.data?.members?.map((m) => (
@@ -94,7 +94,7 @@ export function MembershipsView() {
                 ))}
               </select>
             </label>
-            <label className="text-xs font-bold text-slate-600 lg:col-span-2">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted lg:col-span-2">
               Plan
               <select
                 required
@@ -102,7 +102,7 @@ export function MembershipsView() {
                 onChange={(e) =>
                   setForm({ ...form, membership_plan_id: e.target.value })
                 }
-                className="mt-1 h-11 w-full rounded-xl border border-slate-200 bg-white px-3"
+                className="mt-1 h-11 w-full rounded-md border border-line bg-white px-3 font-semibold focus:border-brand focus:ring-4 focus:ring-brand/10"
               >
                 <option value="">Selecciona un plan</option>
                 {options.data?.plans?.map((p) => (
@@ -112,7 +112,7 @@ export function MembershipsView() {
                 ))}
               </select>
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Fecha de inicio
               <Input
                 type="date"
@@ -123,7 +123,7 @@ export function MembershipsView() {
                 className="mt-1"
               />
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Descuento
               <Input
                 type="number"
@@ -134,7 +134,7 @@ export function MembershipsView() {
                 className="mt-1"
               />
             </label>
-            <label className="flex items-center gap-2 text-sm font-bold lg:col-span-2">
+            <label className="flex items-center gap-2 text-sm font-extrabold text-carbon lg:col-span-2">
               <input
                 type="checkbox"
                 checked={form.pay_now}
@@ -145,12 +145,12 @@ export function MembershipsView() {
               Cobrar ahora
             </label>
             {form.pay_now && (
-              <label className="text-xs font-bold text-slate-600">
+              <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
                 Método
                 <select
                   value={form.method}
                   onChange={(e) => setForm({ ...form, method: e.target.value })}
-                  className="mt-1 h-11 w-full rounded-xl border border-slate-200 bg-white px-3"
+                  className="mt-1 h-11 w-full rounded-md border border-line bg-white px-3 font-semibold focus:border-brand focus:ring-4 focus:ring-brand/10"
                 >
                   <option>efectivo</option>
                   <option>tarjeta</option>
@@ -177,7 +177,7 @@ export function MembershipsView() {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+              <thead className="bg-[#083B3A] text-xs uppercase tracking-[.14em] text-teal-50">
                 <tr>
                   <th className="px-5 py-4">Socio</th>
                   <th className="px-5 py-4">Plan</th>
@@ -189,9 +189,9 @@ export function MembershipsView() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {list.data.map((m) => (
-                  <tr key={m.id}>
+                  <tr key={m.id} className="transition hover:bg-brandSoft/50">
                     <td className="px-5 py-4">
-                      <p className="font-bold">
+                      <p className="font-extrabold text-carbon">
                         {m.member.first_name} {m.member.last_name}
                       </p>
                       <p className="text-xs text-slate-400">{m.code}</p>
@@ -200,7 +200,7 @@ export function MembershipsView() {
                     <td className="px-5 py-4 text-xs">
                       {shortDate(m.start_date)} — {shortDate(m.end_date)}
                     </td>
-                    <td className="px-5 py-4 font-bold">
+                    <td className="px-5 py-4 font-extrabold text-carbon">
                       {money(Number(m.total) - Number(m.paid_amount))}
                     </td>
                     <td className="px-5 py-4">
@@ -210,7 +210,7 @@ export function MembershipsView() {
                       {!["cancelada", "vencida"].includes(m.status) && (
                         <button
                           onClick={() => cancel.mutate(m.id)}
-                          className="text-xs font-bold text-accent"
+                          className="text-xs font-extrabold uppercase tracking-[.12em] text-accent"
                         >
                           Cancelar
                         </button>

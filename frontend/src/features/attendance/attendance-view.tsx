@@ -71,11 +71,13 @@ export function AttendanceView() {
       <div className="grid gap-6 xl:grid-cols-[.7fr_1.3fr]">
         <div>
           <Card className="bg-carbon text-white">
-            <div className="grid h-14 w-14 place-items-center rounded-2xl bg-brand">
+            <div className="grid h-14 w-14 place-items-center rounded-md bg-brand">
               <LogIn />
             </div>
-            <h2 className="mt-6 text-2xl font-black">Registrar ingreso</h2>
-            <p className="mt-2 text-sm text-slate-400">
+            <h2 className="mt-6 font-display text-4xl font-extrabold leading-none">
+              Registrar ingreso
+            </h2>
+            <p className="mt-2 text-sm font-semibold leading-6 text-slate-400">
               El sistema verifica estado, vigencia, saldo, sesiones y horario.
             </p>
             <form
@@ -92,7 +94,7 @@ export function AttendanceView() {
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 placeholder="Código o documento"
-                className="h-14 border-white/10 bg-white/10 text-lg font-bold text-white placeholder:text-slate-500"
+                className="h-14 border-white/10 bg-white/10 text-lg font-extrabold text-white placeholder:text-slate-500"
               />
               <Button disabled={checkin.isPending} className="mt-3 h-12 w-full">
                 {checkin.isPending ? "Validando…" : "Permitir ingreso"}
@@ -100,7 +102,7 @@ export function AttendanceView() {
             </form>
             {notice && (
               <p
-                className={`mt-4 rounded-xl p-3 text-sm ${notice.ok ? "bg-emerald-500/15 text-emerald-300" : "bg-red-500/15 text-red-300"}`}
+                className={`mt-4 rounded-md border p-3 text-sm font-semibold ${notice.ok ? "border-mint/20 bg-emerald-500/15 text-emerald-300" : "border-red-400/20 bg-red-500/15 text-red-300"}`}
               >
                 {notice.text}
               </p>
@@ -113,8 +115,12 @@ export function AttendanceView() {
               ["Denegados", denied],
             ].map(([l, v]) => (
               <Card key={l} className="p-4 text-center">
-                <p className="text-2xl font-black">{v}</p>
-                <p className="text-xs text-slate-500">{l}</p>
+                <p className="font-display text-4xl font-extrabold leading-none text-carbon">
+                  {v}
+                </p>
+                <p className="mt-1 text-xs font-extrabold uppercase tracking-[.12em] text-muted">
+                  {l}
+                </p>
               </Card>
             ))}
           </div>
@@ -122,7 +128,7 @@ export function AttendanceView() {
         <div>
           {list.data?.length ? (
             <Card className="overflow-hidden p-0">
-              <div className="border-b border-slate-100 px-5 py-4 font-black">
+              <div className="border-b border-line px-5 py-4 font-display text-2xl font-extrabold leading-none text-carbon">
                 Actividad de hoy
               </div>
               <div className="divide-y divide-slate-100">
@@ -132,7 +138,7 @@ export function AttendanceView() {
                     className="flex items-center justify-between gap-4 px-5 py-4"
                   >
                     <div>
-                      <p className="font-bold">
+                      <p className="font-extrabold text-carbon">
                         {a.members?.first_name} {a.members?.last_name}
                       </p>
                       <p className="text-xs text-slate-400">
@@ -148,8 +154,8 @@ export function AttendanceView() {
                       <Badge
                         className={
                           a.result === "permitido"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-red-50 text-red-700"
+                            ? "border-mint/20 bg-mintSoft text-mint"
+                            : "border-red-100 bg-red-50 text-accent"
                         }
                       >
                         {a.result}
@@ -158,7 +164,7 @@ export function AttendanceView() {
                         <button
                           onClick={() => checkout.mutate(a.id)}
                           title="Registrar salida"
-                          className="grid h-9 w-9 place-items-center rounded-lg bg-slate-100 text-slate-600"
+                          className="grid h-9 w-9 place-items-center rounded-md bg-slate-100 text-slate-600 transition hover:bg-brandSoft hover:text-brand"
                         >
                           <LogOut size={16} />
                         </button>

@@ -13,7 +13,7 @@ const empty = {
   price: "",
   duration_days: "30",
   sessions_included: "",
-  color: "#FF5A1F",
+  color: "#00C2A8",
 };
 export function PlansView() {
   const qc = useQueryClient();
@@ -94,7 +94,7 @@ export function PlansView() {
             }}
             className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5"
           >
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Nombre
               <Input
                 required
@@ -103,7 +103,7 @@ export function PlansView() {
                 className="mt-1"
               />
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Precio
               <Input
                 required
@@ -115,7 +115,7 @@ export function PlansView() {
                 className="mt-1"
               />
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Duración (días)
               <Input
                 required
@@ -128,7 +128,7 @@ export function PlansView() {
                 className="mt-1"
               />
             </label>
-            <label className="text-xs font-bold text-slate-600">
+            <label className="text-xs font-extrabold uppercase tracking-[.12em] text-muted">
               Sesiones
               <Input
                 min="1"
@@ -160,27 +160,29 @@ export function PlansView() {
               <div className="flex gap-2">
                 <button
                   onClick={() => beginEdit(p)}
-                  className="rounded-full bg-orange-50 px-3 py-1 text-xs font-bold text-brand"
+                  className="rounded-md border border-brand/20 bg-brandSoft px-3 py-1 text-xs font-extrabold uppercase tracking-[.12em] text-brand"
                 >
                   Editar
                 </button>
                 <button
                   onClick={() => toggle.mutate(p)}
-                  className={`rounded-full px-3 py-1 text-xs font-bold ${p.is_active ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}
+                  className={`rounded-md border px-3 py-1 text-xs font-extrabold uppercase tracking-[.12em] ${p.is_active ? "border-mint/20 bg-mintSoft text-mint" : "border-slate-200 bg-slate-100 text-muted"}`}
                 >
                   {p.is_active ? "Activo" : "Inactivo"}
                 </button>
               </div>
             </div>
-            <h2 className="mt-5 text-xl font-black text-carbon">{p.name}</h2>
-            <p className="mt-1 text-3xl font-black text-carbon">
+            <h2 className="mt-5 font-display text-3xl font-extrabold leading-none text-carbon">
+              {p.name}
+            </h2>
+            <p className="mt-2 font-display text-5xl font-extrabold leading-none text-carbon">
               {money(p.price)}
             </p>
-            <p className="mt-4 flex items-center gap-2 text-sm text-slate-500">
+            <p className="mt-5 flex items-center gap-2 text-sm font-semibold text-muted">
               <Check size={16} className="text-mint" />
               {p.duration_days} días de acceso
             </p>
-            <p className="mt-2 flex items-center gap-2 text-sm text-slate-500">
+            <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-muted">
               <Users size={16} className="text-mint" />
               {p.sessions_included
                 ? `${p.sessions_included} sesiones incluidas`
