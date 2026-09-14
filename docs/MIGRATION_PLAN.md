@@ -1,27 +1,27 @@
 # Backend migration plan
 
-Baseline: the existing working tree, including uncommitted TypeScript services and tests. Cloud infrastructure had not been created when this migration began. Preserve those files as a legacy reference until the new stack is verified; never apply legacy Supabase migrations to Neon.
+Baseline: the existing working tree, including uncommitted TypeScript services and tests. Cloud infrastructure had not been created when this migration began. The local migration has been verified and obsolete provider files have been removed.
 
 ## Implementation sequence
 
 1. Add an independent NestJS npm workspace: validated configuration, Firebase Admin authentication, database-backed tenant/role resolution, versioned routes, validation, safe exceptions, JSON request logs, health checks, graceful shutdown.
-2. Keep node-postgres and migrate the PostgreSQL schema without Supabase Auth, RLS helpers, or Storage dependencies. Retain UUID profile IDs and use a unique text Firebase UID for identity mapping. Use a small pool and transaction-scoped tenant advisory locks.
+2. Keep node-postgres and migrate the PostgreSQL schema with provider-independent identity and storage boundaries. Retain UUID profile IDs and use a unique text Firebase UID for identity mapping. Use a small pool and transaction-scoped tenant advisory locks.
 3. Port the seven operations into domain services and repositories. Preserve request fields, response envelopes, Spanish messages, monetary rounding, audit fields, rollback, and concurrent-operation behavior. Add tenant-scoped read APIs and member/plan writes replacing browser database access.
 4. Replace browser authentication with Firebase Web SDK and Bearer ID tokens. Replace the cookie proxy/server layout with a client session boundary. Export the Next.js UI as static files for Firebase Hosting.
 5. Add private GCS member-photo signed upload/download and delete workflows. Authorize by database membership and tenant; verify uploaded object metadata before attaching it to a profile. No persistent container filesystem state.
-6. Validate NestJS HTTP contracts, auth/roles, SQL transactions and concurrency, CRUD, storage errors, type checks, static frontend production build, and formatting. Retain legacy reference files without using their SDKs in the active application.
+6. Validate NestJS HTTP contracts, auth/roles, SQL transactions and concurrency, CRUD, storage errors, type checks, static frontend production build, and formatting. Remove obsolete implementation files and tooling after validating the replacement.
 7. Prepare multi-stage Docker build, local PostgreSQL/Firebase Auth emulator configuration, Cloud Run/Secret Manager setup instructions, and Firebase Hosting configuration. Provision and deploy only after local readiness.
 
 ## Provider mapping
 
-| Current                               | Target                                                  |
-| ------------------------------------- | ------------------------------------------------------- |
-| Supabase PostgreSQL                   | Neon PostgreSQL; local PostgreSQL for tests             |
-| Edge Functions                        | NestJS controllers/services/repositories                |
-| Supabase Auth                         | Firebase Web SDK + Firebase Admin guard                 |
-| Supabase RLS/direct browser DB access | Server tenant/role checks + REST repositories           |
-| Supabase private member-photos bucket | Private GCS objects + authorized signed URLs            |
-| Supabase environment/CLI              | Backend env, Cloud Run secrets, local Compose/emulators |
+| Current                        | Target                                                  |
+| ------------------------------ | ------------------------------------------------------- |
+| Hosted PostgreSQL              | Neon PostgreSQL; local PostgreSQL for tests             |
+| Edge Functions                 | NestJS controllers/services/repositories                |
+| Hosted authentication          | Firebase Web SDK + Firebase Admin guard                 |
+| Direct browser DB access       | Server tenant/role checks + REST repositories           |
+| Provider-managed member photos | Private GCS objects + authorized signed URLs            |
+| Previous environment/CLI       | Backend env, Cloud Run secrets, local Compose/emulators |
 
 ## Contracts to preserve
 
@@ -39,7 +39,7 @@ Cloud Run uses Application Default Credentials and a dedicated service identity;
 
 Firebase UID does not replace UUID audit/profile keys. Registration grants no gym role automatically. All APIs derive tenant identity from the verified Firebase UID, never from submitted identity fields. Auth-dependent browser caches must clear on sign-out/account changes. Existing timezone/date and integer-cent monetary rules remain compatible. The static frontend session boundary controls presentation only; NestJS is the security boundary.
 
-Legacy migrations include auth.users, auth.uid(), Supabase roles and storage policies and cannot be replayed on Neon. No existing deployed application data has been identified for migration.
+Only backend/migrations defines the application schema. No existing deployed application data has been identified for migration.
 
 ## Connection adapter decision
 

@@ -1,7 +1,7 @@
 import { ForbiddenException } from "@nestjs/common";
 import type { Database } from "../database/database";
 import { schemas, type Input, type Operation } from "./schemas";
-import { required, type Context } from "./services/common";
+import type { Context } from "./services/common";
 import {
   createMembership,
   renewMembership,

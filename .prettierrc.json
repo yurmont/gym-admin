@@ -7,7 +7,7 @@
   "singleQuote": false,
   "trailingComma": "all",
   "endOfLine": "lf",
-  "plugins": ["prettier-plugin-sql-cst", "prettier-plugin-toml"],
+  "plugins": ["prettier-plugin-sql-cst"],
   "overrides": [
     {
       "files": "*.sql",

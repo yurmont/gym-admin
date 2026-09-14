@@ -21,8 +21,3 @@ AGENTS.md
 CLAUDE.md
 *.tsbuildinfo
 *.log
-
-# Supabase CLI and Studio state
-supabase/.temp/
-supabase/.branches/
-supabase/snippets/

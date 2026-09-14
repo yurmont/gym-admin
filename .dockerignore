@@ -8,7 +8,6 @@ out
 **/.env.*
 .npm-cache
 .local-tools
-supabase
 **/*.pem
 **/*.key
 **/service-account*.json

@@ -4,7 +4,7 @@ El proyecto original es SportSuite 360 sobre Laravel 11 y MySQL. Su alcance real
 
 | Dominio original                    | Estado en este MVP | Criterio de migración                                                 |
 | ----------------------------------- | ------------------ | --------------------------------------------------------------------- |
-| Tenant, usuario y rol               | Incluido           | Auth de Supabase, `profiles` y RLS por `tenant_id`                    |
+| Tenant, usuario y rol               | Incluido           | Firebase Auth, `profiles` y autorizaci�n por tenant en NestJS         |
 | Socios                              | Incluido           | Ficha operativa, búsqueda, estados y foto privada preparada           |
 | Planes                              | Incluido           | Precio, duración, matrícula, sesiones, congelamiento y horario        |
 | Membresías                          | Incluido           | Alta, renovación, cancelación, saldo y activación automática          |

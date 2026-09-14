@@ -8,7 +8,7 @@ Use Node.js 24 LTS and npm. Run `npm ci` from the repository root.
 
 For normal local development, start Docker Desktop and run `docker compose up -d postgres`. Copy `backend/.env.example` to `backend/.env`, then run `npm run db:migrate`.
 
-Copy the root `.env.example` to `.env.local`; preserve any existing local environment file before replacing its old Supabase settings. Start Firebase Auth Emulator with `npx firebase-tools emulators:start --only auth --project demo-gym-admin`. Emulator UI runs at http://127.0.0.1:4000. Create an email/password user in the emulator and copy its Firebase UID.
+Copy the root `.env.example` to `.env.local`; preserve any existing local environment file before updating its settings. Start Firebase Auth Emulator with `npx firebase-tools emulators:start --only auth --project demo-gym-admin`. Emulator UI runs at http://127.0.0.1:4000. Create an email/password user in the emulator and copy its Firebase UID.
 
 Grant that user a gym administrator profile with:
 
@@ -49,8 +49,6 @@ The API tests verify the shared authentication guard through an injected Firebas
 Use `npm run check:db --workspace @gym-admin/backend` for a read-only connectivity, client TLS certificate and schema-presence check. The script never prints the URL/password. Neon terminates TLS at its proxy, so server-side pg_stat_ssl does not necessarily describe the client-to-proxy connection.
 
 Set DATABASE_DIRECT_URL to the direct Neon connection and run `npm run db:migrate`. The migration runner serializes application with a PostgreSQL advisory lock and tracks files in schema_migrations. Keep applied SQL files immutable; add numbered files for future changes.
-
-Do not apply `supabase/migrations` to Neon. Those files remain legacy references and include Supabase-specific schemas and roles. There is no deployed data migration because infrastructure did not previously exist.
 
 ## Cloud Run
 

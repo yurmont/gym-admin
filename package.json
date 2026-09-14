@@ -18,14 +18,14 @@
     "@hookform/resolvers": "^3.9.1",
     "@tanstack/react-query": "^5.66.9",
     "clsx": "^2.1.1",
+    "firebase": "^12.0.0",
     "lucide-react": "^0.468.0",
     "next": "^16.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
     "tailwind-merge": "^2.6.0",
-    "zod": "^3.24.2",
-    "firebase": "^12.0.0"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.7",
@@ -35,7 +35,6 @@
     "postcss": "^8.5.1",
     "prettier": "3.9.6",
     "prettier-plugin-sql-cst": "0.22.1",
-    "prettier-plugin-toml": "2.0.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3"
   },

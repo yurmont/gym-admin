@@ -56,5 +56,3 @@ compose.yaml                    development PostgreSQL
 ## Migration and deployment
 
 See [Migration plan](docs/MIGRATION_PLAN.md) and [Deployment guide](docs/DEPLOYMENT.md). No cloud infrastructure has been provisioned or deployed by the local migration. Live Firebase, Neon, GCS and Cloud Run acceptance checks remain part of the infrastructure phase.
-
-Supabase packages and calls are removed from the active frontend/backend and CI. Existing supabase/ files and scripts/run-http-tests.mjs remain historical references to preserve prior uncommitted work; they are not used by the new application, new schema or tests. [Previous Supabase setup](docs/LEGACY_SUPABASE.md) records the old architecture. Do not replay legacy Supabase SQL on Neon.

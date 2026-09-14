@@ -7,7 +7,6 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { Pool, types } from "pg";
 // The container retains backend/scripts alongside dist.
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { databaseOptions } = require("../../scripts/database-config.cjs") as {
   databaseOptions: (url: string, max: number) => import("pg").PoolConfig;
 };
