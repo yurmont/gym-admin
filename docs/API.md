@@ -43,3 +43,9 @@ No delete-member/plan operation is introduced: the previous UI creates/updates m
 5. DELETE /members/:id/photo deletes the object and clears that path. A concurrent attachment of a different photo is not cleared.
 
 Signed URLs expire after five minutes. GCS IAM/bucket CORS/signing must be configured during infrastructure setup. Unconfirmed/replaced objects require bucket retention/cleanup policies; confirmation limits attachment size and does not prevent a client uploading an oversized unattached object.
+
+## Implementation locations
+
+Business controllers live in backend/src/modules/<feature>/<feature>.controller.ts. The attendance feature folder is attendance/, while its route remains /attendances. Membership plans use membership-plans/. Profile /me and health routes belong to profiles/ and health/, respectively. Photo routes belong to storage/storage.controller.ts.
+
+Each feature owns validation, read repositories and service orchestration. Memberships, payments and attendance invoke feature-local transaction functions through the shared authorized transaction context. This organization does not change the REST contract.

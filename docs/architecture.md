@@ -26,7 +26,7 @@ All paths below are relative to the repository root.
 | Frontend environment example and local settings         | `frontend/.env.example`, ignored `frontend/.env.local`                                                            |
 | Static preview server                                   | `frontend/scripts/serve-frontend.mjs`                                                                             |
 | Firebase Hosting                                        | `frontend/firebase.json`                                                                                          |
-| Backend source, SQL and tests                           | `backend/src/`, `backend/migrations/`, `backend/test/`                                                            |
+| Backend source, SQL and tests                           | `backend/src/modules/`, `backend/migrations/`, `backend/test/`                                                    |
 | Backend environment example and local secrets           | `backend/.env.example`, ignored `backend/.env`                                                                    |
 | Local PostgreSQL                                        | `backend/compose.yaml`                                                                                            |
 | Local Firebase Auth Emulator                            | `backend/firebase-emulators.json`                                                                                 |
@@ -55,3 +55,11 @@ Copy either application directory as the new repository root. Its package.json, 
 Changes to a REST contract must preserve compatibility or introduce a new API version. There is no shared runtime/type package; future generated client types should come from an explicit API contract.
 
 The backend owns firebase-emulators.json for optional local Auth testing. Both applications connect to the emulator over localhost; neither imports configuration from the other. The frontend can instead use a real Firebase project. Temporary validation artifacts and npm download caches are not application source and need not be retained in the repository.
+
+## Backend feature organization
+
+Backend features live in backend/src/modules/. Each owns its controller, service, repository and module where applicable. Feature-local dto/ folders hold query DTOs and body schemas. Memberships, payments and attendance own transactional business operations in *.transactions.ts files; shared authorization, transaction locking and money/date helpers live in backend/src/common/business/.
+
+Health endpoints are in backend/src/modules/health/health.controller.ts. Profile /me is in backend/src/modules/profiles/profiles.controller.ts. Photo endpoints are in backend/src/modules/storage/storage.controller.ts. Other business routes are in their feature's *.controller.ts file.
+
+Shared infrastructure lives in backend/src/database/, backend/src/config/ and backend/src/common/. The former combined resources/ and domain/ layers have been removed. API routes, payloads and transactional behavior remain unchanged.

@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { validateConfig } = require("../dist/config");
+const { validateConfig } = require("../dist/config/config");
 const { databaseOptions } = require("../scripts/database-config.cjs");
 const base = {
   DATABASE_URL: "postgresql://user:password@localhost/db",

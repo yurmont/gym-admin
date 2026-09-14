@@ -89,6 +89,14 @@ Before declaring the cloud deployment ready, verify real Firebase login/logout/r
 
 ## File ownership
 
-Paths in this guide are relative to backend/. Runtime code lives in src/, immutable schema migrations in migrations/, operational scripts in scripts/ and regression tests in test/. Local PostgreSQL configuration is compose.yaml, and local Auth Emulator configuration is firebase-emulators.json.
+Paths in this guide are relative to backend/. Runtime code lives in src/modules/ by feature, with shared infrastructure in src/common/, src/database/ and src/config/, immutable schema migrations in migrations/, operational scripts in scripts/ and regression tests in test/. Local PostgreSQL configuration is compose.yaml, and local Auth Emulator configuration is firebase-emulators.json.
 
 Dockerfile and .dockerignore belong here; run docker build with this directory as its context. Both package.json and package-lock.json, as well as .prettierrc.json and .prettierignore, are application-local. CI is defined at ../.github/workflows/backend.yml in the combined repository.
+
+## Feature modules
+
+Each feature lives under src/modules/: auth, profiles, members, membership-plans, memberships, payments, attendance, dashboard, storage and health. Controllers use dedicated *.controller.ts files; feature services orchestrate validation and repositories. Query DTOs and Zod body schemas live in each feature's dto/ folder.
+
+Membership, payment and attendance business operations live in feature-local *.transactions.ts files. They share an authorized transaction context, tenant locking and database clock through common/business/business-transactions.service.ts. Membership payment creation calls the payment transaction function using the same SQL transaction; it does not open a nested transaction.
+
+Repositories contain feature reads and lookups. Database connection and allowlisted member/plan persistence are shared in database/. Filters, HTTP envelopes, validation and logging have dedicated common/ subfolders. app.module.ts wires modules; main.ts and application.ts configure startup and HTTP behavior.

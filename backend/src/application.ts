@@ -4,7 +4,8 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import helmet from "helmet";
-import { ApiExceptionFilter, requestLogging } from "./common/http";
+import { ApiExceptionFilter } from "./common/filters/api-exception.filter";
+import { requestLogging } from "./common/logging/request-logging.middleware";
 
 export function configureApplication(app: INestApplication, origins: string[]) {
   app.use(helmet());

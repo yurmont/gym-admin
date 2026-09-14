@@ -56,3 +56,7 @@ The infrastructure phase must apply the schema, configure Firebase Authenticatio
 ## Repository separation
 
 Frontend source/configuration lives in frontend/ and backend implementation/deployment lives in backend/. Each has its own manifest, lockfile, formatting tools and README. The root has no npm project; neither application imports parent or sibling source. CI installs and checks each independently. See [Application boundaries](architecture.md) for current paths, ownership and extraction.
+
+## Backend module organization
+
+The backend now groups auth, profiles, members, membership plans, memberships, payments, attendance, dashboard, storage and health under backend/src/modules/. Dedicated controllers and feature services replace the combined resources layer. Transaction functions and validation schemas belong to their feature; common transaction authorization and infrastructure remain shared. See [Application boundaries](architecture.md) and [Backend guide](../backend/README.md) for current ownership.

@@ -3,8 +3,10 @@ const assert = require("node:assert/strict");
 const { Test } = require("@nestjs/testing");
 const { AppModule } = require("../dist/app.module");
 const { configureApplication } = require("../dist/application");
-const { FirebaseIdentity } = require("../dist/auth/auth");
-const { GcsObjects } = require("../dist/storage/storage");
+const {
+  FirebaseIdentity,
+} = require("../dist/modules/auth/firebase-identity.service");
+const { GcsObjects } = require("../dist/modules/storage/gcs-objects.service");
 const { withCommittedFixture } = require("./fixture.cjs");
 
 let app, base;
@@ -426,7 +428,7 @@ test("storage and database failures do not leak infrastructure details", () =>
     assert.equal(r.status, 500);
     assert.ok(!JSON.stringify(r.body).includes("secret"));
     await db.query("select 1");
-    const { DatabaseService } = require("../dist/database/database");
+    const { DatabaseService } = require("../dist/database/database.service");
     const database = app.get(DatabaseService),
       original = database.query;
     database.query = async () => {

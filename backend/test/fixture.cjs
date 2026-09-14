@@ -5,9 +5,9 @@ exports.seed = seed;
 exports.helpers = helpers;
 exports.withFixture = withFixture;
 exports.withCommittedFixture = withCommittedFixture;
-const database_1 = require("../dist/database/database");
-const operations_1 = require("../dist/domain/operations");
-const common_1 = require("../dist/domain/services/common");
+const database_1 = require("../dist/database/database.service");
+const operations_1 = require("./business-operations.cjs");
+const common_1 = require("../dist/common/business/context");
 exports.url = process.env.TEST_DATABASE_URL;
 async function seed(db) {
   const ids = Object.fromEntries(
