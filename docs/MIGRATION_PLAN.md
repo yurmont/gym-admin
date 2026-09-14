@@ -4,7 +4,7 @@ Baseline: the existing working tree, including uncommitted TypeScript services a
 
 ## Implementation sequence
 
-1. Add an independent NestJS npm workspace: validated configuration, Firebase Admin authentication, database-backed tenant/role resolution, versioned routes, validation, safe exceptions, JSON request logs, health checks, graceful shutdown.
+1. Add an independent independent NestJS npm project: validated configuration, Firebase Admin authentication, database-backed tenant/role resolution, versioned routes, validation, safe exceptions, JSON request logs, health checks, graceful shutdown.
 2. Keep node-postgres and migrate the PostgreSQL schema with provider-independent identity and storage boundaries. Retain UUID profile IDs and use a unique text Firebase UID for identity mapping. Use a small pool and transaction-scoped tenant advisory locks.
 3. Port the seven operations into domain services and repositories. Preserve request fields, response envelopes, Spanish messages, monetary rounding, audit fields, rollback, and concurrent-operation behavior. Add tenant-scoped read APIs and member/plan writes replacing browser database access.
 4. Replace browser authentication with Firebase Web SDK and Bearer ID tokens. Replace the cookie proxy/server layout with a client session boundary. Export the Next.js UI as static files for Firebase Hosting.
@@ -52,3 +52,7 @@ Local implementation is complete. All 57 backend tests pass against disposable P
 The supplied Neon connection is saved only in the ignored backend/.env file. A read-only check reached the gymadmin database over TLS with certificate verification enabled. The application schema is absent; no schema or data changes have been applied to Neon.
 
 The infrastructure phase must apply the schema, configure Firebase Authentication and GCS IAM, deploy Cloud Run and Firebase Hosting, and verify live authentication and signed object URLs. The Dockerfile is prepared, but an actual container build remains unverified because the local Docker daemon is not running.
+
+## Repository separation
+
+Frontend source/configuration lives in frontend/ and backend implementation/deployment lives in backend/. Each has its own manifest, lockfile, formatting tools and README. The root has no npm project; neither application imports parent or sibling source. CI installs and checks each independently. See architecture.md for ownership and extraction.

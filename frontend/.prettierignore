@@ -1,0 +1,23 @@
+# Dependencies and build output
+node_modules/
+.next/
+out/
+dist/
+coverage/
+.vercel/
+.npm-cache/
+.local-tools/
+.firebase/
+
+# Local secrets and environment files
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Generated Next.js files and agent instruction blocks
+next-env.d.ts
+AGENTS.md
+CLAUDE.md
+*.tsbuildinfo
+*.log

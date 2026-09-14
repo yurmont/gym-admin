@@ -10,7 +10,9 @@
     "migrate": "node --env-file-if-exists=.env scripts/migrate.mjs",
     "bootstrap": "node --env-file-if-exists=.env scripts/bootstrap.mjs",
     "test": "npm run build && node scripts/test.mjs",
-    "check:db": "node --env-file-if-exists=.env scripts/check-db.mjs"
+    "check:db": "node --env-file-if-exists=.env scripts/check-db.mjs",
+    "format": "prettier --write . --ignore-unknown",
+    "format:check": "prettier --check . --ignore-unknown"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.19.0",
@@ -34,6 +36,8 @@
     "@types/pg": "^8.15.5",
     "embedded-postgres": "^18.4.0-beta.17",
     "expect": "^30.5.1",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "prettier": "3.9.6",
+    "prettier-plugin-sql-cst": "0.22.1"
   }
 }

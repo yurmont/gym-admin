@@ -1,21 +1,19 @@
 FROM node:24-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-COPY backend/package.json ./backend/package.json
-RUN npm ci --workspace @gym-admin/backend --include-workspace-root=false
-COPY backend/tsconfig.json ./backend/tsconfig.json
-COPY backend/src ./backend/src
-RUN npm run build --workspace @gym-admin/backend
+RUN npm ci
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
 
 FROM node:24-alpine AS production
 ENV NODE_ENV=production
 WORKDIR /app
 COPY package.json package-lock.json ./
-COPY backend/package.json ./backend/package.json
-RUN npm ci --workspace @gym-admin/backend --include-workspace-root=false --omit=dev && npm cache clean --force
-COPY --from=build /app/backend/dist ./backend/dist
-COPY backend/migrations ./backend/migrations
-COPY backend/scripts ./backend/scripts
+RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=build /app/dist ./dist
+COPY migrations ./migrations
+COPY scripts ./scripts
 USER node
 EXPOSE 8080
-CMD ["node", "backend/dist/main.js"]
+CMD ["node", "dist/main.js"]
