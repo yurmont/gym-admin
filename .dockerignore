@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+.git
+.next
+out
+**/dist
+**/.env
+**/.env.*
+.npm-cache
+.local-tools
+supabase
+**/*.pem
+**/*.key
+**/service-account*.json

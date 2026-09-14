@@ -11,8 +11,9 @@ import {
   Input,
   PageHeader,
 } from "@/components/ui";
-import { invokeEdge } from "@/lib/api/edge";
-import { createClient } from "@/lib/supabase/client";
+import { runOperation } from "@/lib/api/operations";
+import type { Attendance } from "@/lib/types";
+import { apiData } from "@/lib/api/client";
 
 export function AttendanceView() {
   const [identifier, setIdentifier] = useState("");
@@ -24,22 +25,14 @@ export function AttendanceView() {
   today.setHours(0, 0, 0, 0);
   const list = useQuery({
     queryKey: ["attendance", today.toISOString().slice(0, 10)],
-    queryFn: async () => {
-      const { data, error } = await createClient()
-        .from("attendances")
-        .select(
-          "id,check_in,check_out,minutes_stayed,result,denied_reason,members(code,first_name,last_name)",
-        )
-        .gte("check_in", today.toISOString())
-        .order("check_in", { ascending: false })
-        .limit(100);
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () =>
+      apiData<Attendance[]>(
+        `/attendances?since=${encodeURIComponent(today.toISOString())}`,
+      ),
   });
   const checkin = useMutation({
     mutationFn: () =>
-      invokeEdge<{ allowed: boolean }>("attendance-check-in", {
+      runOperation<{ allowed: boolean }>("attendance-check-in", {
         identifier,
         method: "manual",
       }),
@@ -56,7 +49,7 @@ export function AttendanceView() {
   });
   const checkout = useMutation({
     mutationFn: (id: string) =>
-      invokeEdge("attendance-check-out", { attendance_id: id }),
+      runOperation("attendance-check-out", { attendance_id: id }),
     onSuccess: (r) => {
       setNotice({ ok: true, text: r.message });
       qc.invalidateQueries({ queryKey: ["attendance"] });

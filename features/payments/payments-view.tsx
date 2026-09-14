@@ -11,8 +11,9 @@ import {
   Input,
   PageHeader,
 } from "@/components/ui";
-import { invokeEdge } from "@/lib/api/edge";
-import { createClient } from "@/lib/supabase/client";
+import { runOperation } from "@/lib/api/operations";
+import { apiData } from "@/lib/api/client";
+import type { Member, Payment, PendingMembership } from "@/lib/types";
 import { money, shortDate } from "@/lib/utils";
 export function PaymentsView() {
   const qc = useQueryClient();
@@ -28,43 +29,19 @@ export function PaymentsView() {
   });
   const list = useQuery({
     queryKey: ["payments"],
-    queryFn: async () => {
-      const { data, error } = await createClient()
-        .from("payments")
-        .select(
-          "id,code,concept,total,method,reference,status,paid_at,members(first_name,last_name)",
-        )
-        .order("paid_at", { ascending: false })
-        .limit(100);
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => apiData<Payment[]>("/payments"),
   });
   const opts = useQuery({
     queryKey: ["payment-options"],
-    queryFn: async () => {
-      const db = createClient();
-      const [m, ms] = await Promise.all([
-        db
-          .from("members")
-          .select("id,code,first_name,last_name")
-          .neq("status", "baja")
-          .order("last_name"),
-        db
-          .from("memberships")
-          .select(
-            "id,code,total,paid_amount,member_id,members(first_name,last_name)",
-          )
-          .eq("status", "pendiente_pago"),
-      ]);
-      if (m.error) throw m.error;
-      if (ms.error) throw ms.error;
-      return { members: m.data, memberships: ms.data };
-    },
+    queryFn: () =>
+      apiData<{
+        members: Pick<Member, "id" | "code" | "first_name" | "last_name">[];
+        memberships: PendingMembership[];
+      }>("/payments/options"),
   });
   const create = useMutation({
     mutationFn: () =>
-      invokeEdge("register-payment", {
+      runOperation("register-payment", {
         ...form,
         member_id: form.member_id || null,
         membership_id: form.membership_id || null,
@@ -81,7 +58,8 @@ export function PaymentsView() {
     },
   });
   const voidPay = useMutation({
-    mutationFn: (id: string) => invokeEdge("void-payment", { payment_id: id }),
+    mutationFn: (id: string) =>
+      runOperation("void-payment", { payment_id: id }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["payments"] });
       qc.invalidateQueries({ queryKey: ["memberships"] });

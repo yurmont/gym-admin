@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Plus, Users } from "lucide-react";
 import { useState } from "react";
 import { Button, Card, EmptyState, Input, PageHeader } from "@/components/ui";
-import { createClient } from "@/lib/supabase/client";
+import { apiData, apiRequest } from "@/lib/api/client";
 import type { MembershipPlan } from "@/lib/types";
 import { money } from "@/lib/utils";
 
@@ -22,14 +22,7 @@ export function PlansView() {
   const [form, setForm] = useState(empty);
   const plans = useQuery({
     queryKey: ["plans"],
-    queryFn: async () => {
-      const { data, error } = await createClient()
-        .from("membership_plans")
-        .select("*")
-        .order("sort_order");
-      if (error) throw error;
-      return data as MembershipPlan[];
-    },
+    queryFn: () => apiData<MembershipPlan[]>("/membership-plans"),
   });
   const save = useMutation({
     mutationFn: async () => {
@@ -42,14 +35,11 @@ export function PlansView() {
           : null,
         color: form.color,
       };
-      const req = editing
-        ? createClient()
-            .from("membership_plans")
-            .update(payload)
-            .eq("id", editing.id)
-        : createClient().from("membership_plans").insert(payload);
-      const { error } = await req;
-      if (error) throw error;
+      await apiRequest(
+        editing ? `/membership-plans/${editing.id}` : "/membership-plans",
+        editing ? "PATCH" : "POST",
+        payload,
+      );
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["plans"] });
@@ -60,11 +50,9 @@ export function PlansView() {
   });
   const toggle = useMutation({
     mutationFn: async (p: MembershipPlan) => {
-      const { error } = await createClient()
-        .from("membership_plans")
-        .update({ is_active: !p.is_active })
-        .eq("id", p.id);
-      if (error) throw error;
+      await apiRequest(`/membership-plans/${p.id}/status`, "PATCH", {
+        is_active: !p.is_active,
+      });
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["plans"] }),
   });

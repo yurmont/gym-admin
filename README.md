@@ -1,94 +1,60 @@
-# SportSuite 360 — Next.js + Supabase
+# SportSuite 360 � Next.js + NestJS
 
-MVP multiempresa para gimnasios reconstruido a partir del producto Laravel original. Incluye autenticación, aislamiento por tenant, socios, planes, membresías, pagos, asistencia y dashboard.
+Multi-tenant gym administration: members, plans, memberships, payments, attendance and dashboard. The UI and business behavior are preserved from the existing MVP.
 
-## Stack
+## Architecture
 
-- Next.js (App Router), React, TypeScript y Tailwind CSS
-- TanStack Query, React Hook Form y Zod
-- Supabase Auth, PostgreSQL, Storage, Row Level Security y Edge Functions
+- Next.js App Router, React, TypeScript and Tailwind; static export for Firebase Hosting.
+- Firebase Authentication Web SDK for login/session management.
+- NestJS REST API with versioned routes and Firebase Admin ID-token verification.
+- Neon PostgreSQL accessed directly from NestJS using a server-only DATABASE_URL connection string and node-postgres. No ORM migration is required.
+- Private Google Cloud Storage member photos with authorized signed URLs.
+- Containerized NestJS for Cloud Run, production database secrets from Secret Manager, structured JSON logs for Cloud Logging.
 
-## Desarrollo local
+Browsers call the API with Firebase Bearer ID tokens. Only NestJS holds database access; tenant and role authorization are enforced on every business API. Registration alone does not grant gym access.
 
-Requisitos: Node.js 20 o superior, npm, una cuenta Supabase y Supabase CLI para trabajar con la base local o remota.
+## Local setup
 
-```bash
-npm install
-copy .env.example .env.local
-npm run dev
-```
+Use Node.js 24 LTS. Run npm ci, copy the environment examples, start local PostgreSQL and the Firebase Auth Emulator, migrate the new schema, create an Auth user and bootstrap its administrator profile. Full commands are in [Deployment and local setup](docs/DEPLOYMENT.md).
 
-Completa `.env.local` con los valores de **Project Settings → API**. `SUPABASE_SERVICE_ROLE_KEY` nunca lleva el prefijo `NEXT_PUBLIC_` y no se utiliza en el navegador.
+Run npm run dev for the frontend and npm run dev:backend for the API. For Neon, configure backend/.env DATABASE_URL with the pooled Neon connection string, including TLS settings supplied by Neon. DATABASE_DIRECT_URL is optional for migrations and is never a frontend setting.
 
-## Preparar Supabase
+## Validation
 
-```bash
-supabase login
-supabase link --project-ref TU_PROJECT_REF
-supabase db push
-supabase db seed
-supabase functions deploy
-```
-
-La migración crea todas las tablas, índices, políticas RLS, el bucket privado de fotos y las funciones SQL transaccionales. El seed crea el tenant demo y tres planes.
-
-Para el primer acceso:
-
-1. Crea un usuario en **Authentication → Users** desde el dashboard de Supabase.
-2. Copia su UUID.
-3. Ejecuta en el SQL Editor la sentencia comentada al final de `supabase/seed.sql`, reemplazando `USER_UUID`.
-4. Inicia sesión con el correo y contraseña de ese usuario.
-
-## Seguridad y operaciones críticas
-
-El navegador solo hace CRUD directo sobre socios y planes. RLS adjunta y valida el `tenant_id` del usuario autenticado. Las membresías, pagos y asistencias pasan por Edge Functions que:
-
-1. verifican el JWT;
-2. validan el payload con Zod;
-3. ejecutan una función PostgreSQL atómica con la clave de servicio;
-4. vuelven a validar tenant, usuario activo y rol dentro de PostgreSQL.
-
-Los RPC críticos no tienen permiso de ejecución para `anon` ni `authenticated`; solo `service_role` puede invocarlos.
-
-## Validación
-
-```bash
+```sh
+npm run format
+npm run format:check
 npm run typecheck
+npm run test:backend
 npm run build
 ```
 
-## Formato del código
+Backend tests use a disposable real PostgreSQL instance with no cloud resources. They preserve service tests and add NestJS HTTP, authentication/authorization, CRUD and storage adapter tests. Production frontend builds export to out/; npm start previews these static files locally.
 
-Prettier y sus plugins para PostgreSQL/PL/pgSQL y TOML están incluidos como dependencias de desarrollo. Después de `npm install`, ejecuta:
+## Main API routes
 
-```bash
-npm run format
-npm run format:check
-```
+/api/v1/me, /members, /membership-plans, /memberships, /payments, /attendances and /dashboard. Membership create/renew/cancel, payment register/void, and attendance check-in/check-out retain their existing business rules and response envelopes. Public /health and /health/ready provide liveness and database readiness.
 
-`format` aplica el formato y `format:check` comprueba los archivos sin modificarlos. La configuración compartida está en `.prettierrc.json`; `.prettierignore` excluye dependencias, archivos generados, secretos y estado local de Supabase.
-
-En VS Code, abre la carpeta del repositorio e instala la extensión recomendada **Prettier – Code formatter** (`esbenp.prettier-vscode`). Los ajustes de `.vscode/settings.json` activan el formato al guardar, también para SQL y TOML. Las instrucciones de `AGENTS.md` requieren usar esta configuración en futuros cambios.
-
-## Despliegue en Vercel
-
-1. Importa este repositorio en Vercel.
-2. Agrega `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` a todos los entornos requeridos.
-3. Despliega. Vercel detectará Next.js automáticamente.
-
-Las Edge Functions y migraciones se despliegan en Supabase, no en Vercel. Configura en Supabase los dominios de producción y vista previa permitidos para Auth.
-
-## Estructura
+## Structure
 
 ```text
-app/                       rutas y layouts
-components/                shell y componentes compartidos
-features/                  UI y consultas por dominio
-lib/supabase/              clientes browser/server
-lib/api/                   cliente de Edge Functions
-supabase/migrations/       esquema, RLS y RPC transaccionales
-supabase/functions/        siete operaciones críticas
-supabase/seed.sql          tenant y planes de demostración
+app/, components/, features/     frontend routes and UI
+lib/firebase/                   Firebase Web authentication
+lib/api/                        Bearer-token REST client
+backend/src/auth/               Firebase Admin guard and profiles
+backend/src/database/           node-postgres connection provider
+backend/src/domain/             transactional business services
+backend/src/resources/          REST controllers, reads and CRUD
+backend/src/storage/            private GCS photo service
+backend/migrations/             provider-independent schema
+backend/test/                   local service and HTTP tests
+backend/Dockerfile              multi-stage Cloud Run container
+firebase.json                   static Hosting and Auth Emulator
+compose.yaml                    development PostgreSQL
 ```
 
-La comparación con el producto original está en `docs/LEGACY_MAPPING.md`.
+## Migration and deployment
+
+See [Migration plan](docs/MIGRATION_PLAN.md) and [Deployment guide](docs/DEPLOYMENT.md). No cloud infrastructure has been provisioned or deployed by the local migration. Live Firebase, Neon, GCS and Cloud Run acceptance checks remain part of the infrastructure phase.
+
+Supabase packages and calls are removed from the active frontend/backend and CI. Existing supabase/ files and scripts/run-http-tests.mjs remain historical references to preserve prior uncommitted work; they are not used by the new application, new schema or tests. [Previous Supabase setup](docs/LEGACY_SUPABASE.md) records the old architecture. Do not replay legacy Supabase SQL on Neon.

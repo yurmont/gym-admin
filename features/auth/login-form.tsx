@@ -1,11 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button, Input } from "@/components/ui";
-import { createClient } from "@/lib/supabase/client";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { firebaseAuth } from "@/lib/firebase/client";
 
 const schema = z.object({
   email: z.string().email("Ingresa un correo válido"),
@@ -15,6 +16,15 @@ type Values = z.infer<typeof schema>;
 
 export function LoginForm() {
   const [message, setMessage] = useState("");
+  useEffect(() => {
+    try {
+      return onAuthStateChanged(firebaseAuth(), (user) => {
+        if (user) window.location.replace("/dashboard/");
+      });
+    } catch {
+      /* Missing configuration is reported when the user submits. */
+    }
+  }, []);
   const {
     register,
     handleSubmit,
@@ -23,8 +33,11 @@ export function LoginForm() {
   const submit = async (values: Values) => {
     setMessage("");
     try {
-      const { error } = await createClient().auth.signInWithPassword(values);
-      if (error) throw error;
+      await signInWithEmailAndPassword(
+        firebaseAuth(),
+        values.email,
+        values.password,
+      );
       window.location.assign("/dashboard");
     } catch {
       setMessage(

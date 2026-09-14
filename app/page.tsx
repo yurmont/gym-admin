@@ -1,5 +1,10 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useEffect } from "react";
 
 export default function Home() {
-  redirect("/dashboard");
+  useEffect(() => {
+    window.location.replace("/dashboard/");
+  }, []);
+  return <p className="p-6">Cargando…</p>;
 }

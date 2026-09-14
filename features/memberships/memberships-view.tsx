@@ -11,9 +11,9 @@ import {
   Input,
   PageHeader,
 } from "@/components/ui";
-import { invokeEdge } from "@/lib/api/edge";
-import { createClient } from "@/lib/supabase/client";
-import type { Membership } from "@/lib/types";
+import { runOperation } from "@/lib/api/operations";
+import { apiData } from "@/lib/api/client";
+import type { Membership, Member, MembershipPlan } from "@/lib/types";
 import { money, shortDate } from "@/lib/utils";
 
 export function MembershipsView() {
@@ -29,42 +29,19 @@ export function MembershipsView() {
   });
   const list = useQuery({
     queryKey: ["memberships"],
-    queryFn: async () => {
-      const { data, error } = await createClient()
-        .from("memberships")
-        .select(
-          "id,code,start_date,end_date,total,paid_amount,status,member:members(id,code,first_name,last_name),plan:membership_plans(id,name,color)",
-        )
-        .order("start_date", { ascending: false })
-        .limit(100);
-      if (error) throw error;
-      return data as unknown as Membership[];
-    },
+    queryFn: () => apiData<Membership[]>("/memberships"),
   });
   const options = useQuery({
     queryKey: ["membership-options"],
-    queryFn: async () => {
-      const db = createClient();
-      const [m, p] = await Promise.all([
-        db
-          .from("members")
-          .select("id,code,first_name,last_name")
-          .neq("status", "baja")
-          .order("last_name"),
-        db
-          .from("membership_plans")
-          .select("id,name,price")
-          .eq("is_active", true)
-          .order("sort_order"),
-      ]);
-      if (m.error) throw m.error;
-      if (p.error) throw p.error;
-      return { members: m.data, plans: p.data };
-    },
+    queryFn: () =>
+      apiData<{
+        members: Pick<Member, "id" | "code" | "first_name" | "last_name">[];
+        plans: Pick<MembershipPlan, "id" | "name" | "price">[];
+      }>("/memberships/options"),
   });
   const create = useMutation({
     mutationFn: () =>
-      invokeEdge("create-membership", {
+      runOperation("create-membership", {
         ...form,
         discount: Number(form.discount),
       }),
@@ -76,7 +53,7 @@ export function MembershipsView() {
   });
   const cancel = useMutation({
     mutationFn: (id: string) =>
-      invokeEdge("cancel-membership", { membership_id: id }),
+      runOperation("cancel-membership", { membership_id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["memberships"] }),
   });
   return (

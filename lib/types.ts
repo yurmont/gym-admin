@@ -40,3 +40,34 @@ export interface Membership {
   member: Pick<Member, "id" | "code" | "first_name" | "last_name">;
   plan: Pick<MembershipPlan, "id" | "name" | "color">;
 }
+
+export interface Payment {
+  id: string;
+  code: string;
+  concept: string;
+  total: number;
+  method: string;
+  reference: string | null;
+  status: string;
+  paid_at: string;
+  members: Pick<Member, "first_name" | "last_name"> | null;
+}
+
+export interface PendingMembership {
+  id: string;
+  code: string;
+  total: number;
+  paid_amount: number;
+  member_id: string;
+  members: Pick<Member, "first_name" | "last_name">;
+}
+
+export interface Attendance {
+  id: string;
+  check_in: string;
+  check_out: string | null;
+  minutes_stayed: number | null;
+  result: "permitido" | "denegado";
+  denied_reason: string | null;
+  members: Pick<Member, "code" | "first_name" | "last_name">;
+}

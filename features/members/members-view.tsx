@@ -14,7 +14,7 @@ import {
   Input,
   PageHeader,
 } from "@/components/ui";
-import { createClient } from "@/lib/supabase/client";
+import { apiData, apiRequest } from "@/lib/api/client";
 import type { Member } from "@/lib/types";
 
 const schema = z.object({
@@ -40,22 +40,7 @@ export function MembersView() {
   const qc = useQueryClient();
   const query = useQuery({
     queryKey: ["members", q],
-    queryFn: async () => {
-      let req = createClient()
-        .from("members")
-        .select(
-          "id,code,first_name,last_name,document_number,phone,email,status,joined_at,photo_path",
-        )
-        .order("last_name")
-        .limit(100);
-      if (q)
-        req = req.or(
-          `first_name.ilike.%${q}%,last_name.ilike.%${q}%,code.ilike.%${q}%,document_number.ilike.%${q}%,phone.ilike.%${q}%`,
-        );
-      const { data, error } = await req;
-      if (error) throw error;
-      return data as Member[];
-    },
+    queryFn: () => apiData<Member[]>(`/members?q=${encodeURIComponent(q)}`),
   });
   const form = useForm<Values>({
     resolver: zodResolver(schema),
@@ -75,12 +60,12 @@ export function MembersView() {
         document_number: v.document_number || null,
         phone: v.phone || null,
       };
-      const req = editing
-        ? createClient().from("members").update(payload).eq("id", editing.id)
-        : createClient().from("members").insert(payload);
-      const { data, error } = await req.select().single();
-      if (error) throw error;
-      return data;
+      const result = await apiRequest<Member>(
+        editing ? `/members/${editing.id}` : "/members",
+        editing ? "PATCH" : "POST",
+        payload,
+      );
+      return result.data;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["members"] });

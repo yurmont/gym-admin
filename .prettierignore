@@ -6,6 +6,8 @@ dist/
 coverage/
 .vercel/
 .npm-cache/
+.local-tools/
+.firebase/
 
 # Local secrets and environment files
 .env

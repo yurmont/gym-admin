@@ -15,7 +15,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
+import { signOut } from "firebase/auth";
+import { firebaseAuth } from "@/lib/firebase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 const items = [
   ["/dashboard", "Dashboard", LayoutDashboard],
@@ -35,8 +37,10 @@ export function Sidebar({
 }) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const cache = useQueryClient();
   const logout = async () => {
-    await createClient().auth.signOut();
+    await signOut(firebaseAuth());
+    cache.clear();
     window.location.assign("/login");
   };
   const nav = (

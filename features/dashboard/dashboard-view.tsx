@@ -9,56 +9,25 @@ import {
   Users,
 } from "lucide-react";
 import { Card, PageHeader } from "@/components/ui";
-import { createClient } from "@/lib/supabase/client";
+import { apiData } from "@/lib/api/client";
+import type { Payment } from "@/lib/types";
 import { money } from "@/lib/utils";
 
 async function loadDashboard() {
-  const db = createClient();
   const month = new Date();
   month.setDate(1);
   month.setHours(0, 0, 0, 0);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const [active, overdue, attendance, payments, recent] = await Promise.all([
-    db
-      .from("members")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "activo"),
-    db
-      .from("members")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "moroso"),
-    db
-      .from("attendances")
-      .select("id", { count: "exact", head: true })
-      .eq("result", "permitido")
-      .gte("check_in", today.toISOString()),
-    db
-      .from("payments")
-      .select("total")
-      .eq("status", "pagado")
-      .gte("paid_at", month.toISOString()),
-    db
-      .from("payments")
-      .select("id,code,total,method,paid_at,members(first_name,last_name)")
-      .eq("status", "pagado")
-      .order("paid_at", { ascending: false })
-      .limit(5),
-  ]);
-  const error =
-    active.error ||
-    overdue.error ||
-    attendance.error ||
-    payments.error ||
-    recent.error;
-  if (error) throw error;
-  return {
-    active: active.count ?? 0,
-    overdue: overdue.count ?? 0,
-    attendance: attendance.count ?? 0,
-    income: (payments.data ?? []).reduce((s, p) => s + Number(p.total), 0),
-    recent: recent.data ?? [],
-  };
+  return apiData<{
+    active: number;
+    overdue: number;
+    attendance: number;
+    income: number;
+    recent: Payment[];
+  }>(
+    `/dashboard?today=${encodeURIComponent(today.toISOString())}&month=${encodeURIComponent(month.toISOString())}`,
+  );
 }
 
 export function DashboardView() {
