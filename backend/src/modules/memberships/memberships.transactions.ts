@@ -15,21 +15,60 @@ export async function createMembership(
 ): Promise<string> {
   const plan = await required(
     ctx.db,
-    "select * from public.membership_plans where id=$1 and tenant_id=$2 and is_active for share",
+    `select *
+    from public.membership_plans
+    where id = $1 and tenant_id = $2 and is_active
+    for share`,
     [input.membership_plan_id, ctx.tenant],
     "Plan no disponible",
   );
   await required(
     ctx.db,
-    "select id from public.members where id=$1 and tenant_id=$2 and status<>'baja'",
+    `select id
+    from public.members
+    where id = $1 and tenant_id = $2 and status <> 'baja'`,
     [input.member_id, ctx.tenant],
     "Socio no disponible",
   );
   const total = Math.max(0, cents(plan.price) - cents(input.discount));
   const id = crypto.randomUUID();
   await ctx.db.query(
-    `insert into public.memberships (id,tenant_id,member_id,membership_plan_id,code,start_date,end_date,price,discount,total,paid_amount,status,auto_renew,sold_by_user_id,notes)
-    values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,0,'pendiente_pago',$11,$12,$13)`,
+    `insert into public.memberships
+      (
+        id,
+        tenant_id,
+        member_id,
+        membership_plan_id,
+        code,
+        start_date,
+        end_date,
+        price,
+        discount,
+        total,
+        paid_amount,
+        status,
+        auto_renew,
+        sold_by_user_id,
+        notes
+      )
+    values
+      (
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
+        $8,
+        $9,
+        $10,
+        0,
+        'pendiente_pago',
+        $11,
+        $12,
+        $13
+      )`,
     [
       id,
       ctx.tenant,
@@ -58,17 +97,28 @@ export async function createMembership(
     });
   } else {
     await ctx.db.query(
-      "update public.members set status='moroso',updated_at=now() where id=$1 and tenant_id=$2 and status in ('activo','inactivo','moroso')",
+      `update public.members
+      set
+        status = 'moroso',
+        updated_at = now()
+      where
+        id = $1
+        and tenant_id = $2
+        and status in ('activo', 'inactivo', 'moroso')`,
       [input.member_id, ctx.tenant],
     );
   }
   if (total === 0) {
     await ctx.db.query(
-      "update public.memberships set status='activa' where id=$1 and tenant_id=$2",
+      `update public.memberships
+      set status = 'activa'
+      where id = $1 and tenant_id = $2`,
       [id, ctx.tenant],
     );
     await ctx.db.query(
-      "update public.members set status='activo' where id=$1 and tenant_id=$2",
+      `update public.members
+      set status = 'activo'
+      where id = $1 and tenant_id = $2`,
       [input.member_id, ctx.tenant],
     );
   }
@@ -97,7 +147,12 @@ export async function cancelMembership(
 ) {
   await required(
     ctx.db,
-    "update public.memberships set status='cancelada',updated_at=now() where id=$1 and tenant_id=$2 and status not in ('cancelada','vencida') returning id",
+    `update public.memberships
+    set
+      status = 'cancelada',
+      updated_at = now()
+    where id = $1 and tenant_id = $2 and status not in ('cancelada', 'vencida')
+    returning id`,
     [input.membership_id, ctx.tenant],
     "Membresía no disponible",
   );

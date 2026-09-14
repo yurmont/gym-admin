@@ -17,10 +17,10 @@ export function validateConfig(env: Record<string, unknown>) {
     FIREBASE_AUTH_EMULATOR_HOST: z.string().optional(),
   });
   const result = schema.safeParse(env);
-  if (!result.success)
-    throw new Error(
-      `Invalid backend configuration: ${result.error.issues.map((i) => i.path.join(".")).join(", ")}`,
-    );
+  if (!result.success) {
+    const fields = result.error.issues.map((i) => i.path.join(".")).join(", ");
+    throw new Error(`Invalid backend configuration: ${fields}`);
+  }
   if (
     result.data.NODE_ENV === "production" &&
     result.data.FIREBASE_AUTH_EMULATOR_HOST

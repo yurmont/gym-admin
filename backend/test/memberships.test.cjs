@@ -38,7 +38,7 @@ const fixture_cjs_1 = require("./fixture.cjs");
           Number(
             (
               await db.query(
-                "select count(*) from public.payments where membership_id=$1",
+                `select count(*) from public.payments where membership_id = $1`,
                 [id],
               )
             )[0].count,
@@ -58,7 +58,7 @@ const fixture_cjs_1 = require("./fixture.cjs");
           Number(
             (
               await db.query(
-                "select count(*) from public.payments where membership_id=$1",
+                `select count(*) from public.payments where membership_id = $1`,
                 [id],
               )
             )[0].count,
@@ -83,7 +83,7 @@ const fixture_cjs_1 = require("./fixture.cjs");
   (0, node_test_1.it)("rejects an inactive plan", () =>
     (0, fixture_cjs_1.withFixture)(async ({ create, fixture, db }) => {
       await db.query(
-        "update public.membership_plans set is_active=false where id=$1",
+        `update public.membership_plans set is_active = false where id = $1`,
         [fixture.plan],
       );
       await (0, expect_1.expect)(create()).rejects.toThrow(
@@ -93,9 +93,10 @@ const fixture_cjs_1 = require("./fixture.cjs");
   );
   (0, node_test_1.it)("rejects a removed member", () =>
     (0, fixture_cjs_1.withFixture)(async ({ create, fixture, db }) => {
-      await db.query("update public.members set status='baja' where id=$1", [
-        fixture.member,
-      ]);
+      await db.query(
+        `update public.members set status = 'baja' where id = $1`,
+        [fixture.member],
+      );
       await (0, expect_1.expect)(create()).rejects.toThrow(
         "Socio no disponible",
       );
@@ -168,7 +169,7 @@ const fixture_cjs_1 = require("./fixture.cjs");
         Number(
           (
             await db.query(
-              "select count(*) from public.memberships where tenant_id=$1",
+              `select count(*) from public.memberships where tenant_id = $1`,
               [fixture.tenant],
             )
           )[0].count,
@@ -198,7 +199,9 @@ const fixture_cjs_1 = require("./fixture.cjs");
               Number(
                 (
                   await db.query(
-                    "select count(*) from public.memberships where tenant_id=$1",
+                    `select count(*)
+                    from public.memberships
+                    where tenant_id = $1`,
                     [fixture.tenant],
                   )
                 )[0].count,
@@ -208,7 +211,7 @@ const fixture_cjs_1 = require("./fixture.cjs");
               Number(
                 (
                   await db.query(
-                    "select count(*) from public.payments where tenant_id=$1",
+                    `select count(*) from public.payments where tenant_id = $1`,
                     [fixture.tenant],
                   )
                 )[0].count,

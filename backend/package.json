@@ -11,8 +11,8 @@
     "bootstrap": "node --env-file-if-exists=.env scripts/bootstrap.mjs",
     "test": "npm run build && node scripts/test.mjs",
     "check:db": "node --env-file-if-exists=.env scripts/check-db.mjs",
-    "format": "prettier --write . --ignore-unknown",
-    "format:check": "prettier --check . --ignore-unknown"
+    "format": "node scripts/format-source.mjs && prettier --write . --ignore-unknown",
+    "format:check": "node scripts/format-source.mjs --check && prettier --check . --ignore-unknown"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.19.0",

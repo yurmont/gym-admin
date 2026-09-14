@@ -4,6 +4,7 @@ import { DatabaseService, Row } from "./database.service";
 @Injectable()
 export class TenantWritesRepository {
   constructor(private readonly db: DatabaseService) {}
+
   async save(
     table: "members" | "membership_plans",
     tenant: string,
@@ -28,13 +29,21 @@ export class TenantWritesRepository {
     const values = entries.map(([, value]) => value);
     let rows: Row[];
     if (id) {
+      const assignments = columns.map((key, i) => `${key}=$${i + 1}`).join(",");
       rows = await this.db.query(
-        `update public.${table} set ${columns.map((key, i) => `${key}=$${i + 1}`).join(",")},updated_at=now() where id=$${values.length + 1} and tenant_id=$${values.length + 2} returning *`,
+        `update public.${table}
+         set ${assignments},updated_at=now()
+         where id=$${values.length + 1}
+           and tenant_id=$${values.length + 2}
+         returning *`,
         [...values, id, tenant],
       );
     } else {
+      const placeholders = values.map((_, i) => `$${i + 1}`).join(",");
       rows = await this.db.query(
-        `insert into public.${table} (${columns.join(",")},tenant_id) values (${values.map((_, i) => `$${i + 1}`).join(",")},$${values.length + 1}) returning *`,
+        `insert into public.${table} (${columns.join(",")},tenant_id)
+         values (${placeholders},$${values.length + 1})
+         returning *`,
         [...values, tenant],
       );
     }

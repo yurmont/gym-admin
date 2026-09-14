@@ -18,22 +18,29 @@ import { MembershipsService } from "./memberships.service";
 @UseGuards(FirebaseAuthGuard)
 export class MembershipsController {
   constructor(private readonly service: MembershipsService) {}
-  @Get() async list(@CurrentUser() user: AuthenticatedUser) {
+
+  @Get()
+  async list(@CurrentUser() user: AuthenticatedUser) {
     return success(await this.service.memberships(user));
   }
-  @Get("options") async options(@CurrentUser() user: AuthenticatedUser) {
+
+  @Get("options")
+  async options(@CurrentUser() user: AuthenticatedUser) {
     return success(await this.service.membershipOptions(user));
   }
-  @Post() @HttpCode(200) async create(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() body: unknown,
-  ) {
+
+  @Post()
+  @HttpCode(200)
+  async create(@CurrentUser() user: AuthenticatedUser, @Body() body: unknown) {
     return success(
       await this.service.create(body, user),
       "Membresía creada correctamente.",
     );
   }
-  @Post(":id/renew") @HttpCode(200) async renew(
+
+  @Post(":id/renew")
+  @HttpCode(200)
+  async renew(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
     @Body() body: Record<string, unknown>,
@@ -43,7 +50,10 @@ export class MembershipsController {
       "Membresía renovada correctamente.",
     );
   }
-  @Post(":id/cancel") @HttpCode(200) async cancel(
+
+  @Post(":id/cancel")
+  @HttpCode(200)
+  async cancel(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
   ) {

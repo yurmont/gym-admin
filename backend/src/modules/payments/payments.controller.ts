@@ -18,22 +18,29 @@ import { PaymentsService } from "./payments.service";
 @UseGuards(FirebaseAuthGuard)
 export class PaymentsController {
   constructor(private readonly service: PaymentsService) {}
-  @Get() async list(@CurrentUser() user: AuthenticatedUser) {
+
+  @Get()
+  async list(@CurrentUser() user: AuthenticatedUser) {
     return success(await this.service.payments(user));
   }
-  @Get("options") async options(@CurrentUser() user: AuthenticatedUser) {
+
+  @Get("options")
+  async options(@CurrentUser() user: AuthenticatedUser) {
     return success(await this.service.paymentOptions(user));
   }
-  @Post() @HttpCode(200) async create(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() body: unknown,
-  ) {
+
+  @Post()
+  @HttpCode(200)
+  async create(@CurrentUser() user: AuthenticatedUser, @Body() body: unknown) {
     return success(
       await this.service.create(body, user),
       "Pago registrado correctamente.",
     );
   }
-  @Post(":id/void") @HttpCode(200) async void(
+
+  @Post(":id/void")
+  @HttpCode(200)
+  async void(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
   ) {

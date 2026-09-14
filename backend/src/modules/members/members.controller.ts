@@ -21,19 +21,23 @@ import { MemberQuery } from "./dto/members-query.dto";
 @UseGuards(FirebaseAuthGuard)
 export class MembersController {
   constructor(private readonly service: MembersService) {}
-  @Get() async list(
+
+  @Get()
+  async list(
     @CurrentUser() user: AuthenticatedUser,
     @Query() query: MemberQuery,
   ) {
     return success(await this.service.members(user, query.q));
   }
-  @Post() @HttpCode(200) async create(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() body: unknown,
-  ) {
+
+  @Post()
+  @HttpCode(200)
+  async create(@CurrentUser() user: AuthenticatedUser, @Body() body: unknown) {
     return success(await this.service.saveMember(user, body));
   }
-  @Patch(":id") async update(
+
+  @Patch(":id")
+  async update(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
     @Body() body: unknown,

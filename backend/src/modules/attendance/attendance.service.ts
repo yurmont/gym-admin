@@ -13,14 +13,17 @@ export class AttendanceService {
     private readonly repo: AttendanceRepository,
     private readonly transactions: BusinessTransactions,
   ) {}
+
   attendance(user: AuthenticatedUser, since: string) {
     return this.repo.attendance(user.tenant, since);
   }
+
   checkin(input: unknown, user: AuthenticatedUser) {
     requireManager(user);
     const body = parse(schemas["attendance-check-in"], input);
     return this.transactions.run(user, (ctx) => checkIn(ctx, body));
   }
+
   checkout(input: unknown, user: AuthenticatedUser) {
     requireManager(user);
     const body = parse(schemas["attendance-check-out"], input);

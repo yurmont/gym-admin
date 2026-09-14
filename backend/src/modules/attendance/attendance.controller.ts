@@ -20,16 +20,18 @@ import { AttendanceQuery } from "./dto/attendance-query.dto";
 @UseGuards(FirebaseAuthGuard)
 export class AttendanceController {
   constructor(private readonly service: AttendanceService) {}
-  @Get() async list(
+
+  @Get()
+  async list(
     @CurrentUser() user: AuthenticatedUser,
     @Query() query: AttendanceQuery,
   ) {
     return success(await this.service.attendance(user, query.since));
   }
-  @Post("check-in") @HttpCode(200) async checkin(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() body: unknown,
-  ) {
+
+  @Post("check-in")
+  @HttpCode(200)
+  async checkin(@CurrentUser() user: AuthenticatedUser, @Body() body: unknown) {
     const data = (await this.service.checkin(body, user)) as {
       allowed: boolean;
       member_name: string;
@@ -42,7 +44,10 @@ export class AttendanceController {
         : `Acceso denegado: ${data.reason ?? "sin autorización"}`,
     );
   }
-  @Post(":id/check-out") @HttpCode(200) async checkout(
+
+  @Post(":id/check-out")
+  @HttpCode(200)
+  async checkout(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
   ) {

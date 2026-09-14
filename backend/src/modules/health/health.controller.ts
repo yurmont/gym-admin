@@ -4,10 +4,14 @@ import { HealthService } from "./health.service";
 @Controller()
 export class HealthController {
   constructor(private readonly service: HealthService) {}
-  @Get("health") health() {
+
+  @Get("health")
+  health() {
     return this.service.health();
   }
-  @Get("health/ready") ready() {
+
+  @Get("health/ready")
+  ready() {
     return this.service.ready();
   }
 }

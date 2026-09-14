@@ -10,6 +10,7 @@ export class GcsObjects {
       config.getOrThrow<string>("GCS_BUCKET_NAME"),
     );
   }
+
   async sign(path: string, action: "read" | "write", contentType?: string) {
     const expires = Date.now() + 5 * 60 * 1000;
     const [url] = await this.bucket.file(path).getSignedUrl({
@@ -25,10 +26,12 @@ export class GcsObjects {
     });
     return { url, expires_at: new Date(expires).toISOString() };
   }
+
   async metadata(path: string) {
     const [metadata] = await this.bucket.file(path).getMetadata();
     return metadata;
   }
+
   async delete(path: string) {
     await this.bucket.file(path).delete({ ignoreNotFound: true });
   }

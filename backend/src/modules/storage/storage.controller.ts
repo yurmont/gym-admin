@@ -19,27 +19,37 @@ import { StorageService } from "./storage.service";
 @UseGuards(FirebaseAuthGuard)
 export class StorageController {
   constructor(private readonly service: StorageService) {}
-  @Post("upload-url") @HttpCode(200) async upload(
+
+  @Post("upload-url")
+  @HttpCode(200)
+  async upload(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
     @Body() body: unknown,
   ) {
     return success(await this.service.upload(user, id, body));
   }
-  @Post("confirm") @HttpCode(200) async confirm(
+
+  @Post("confirm")
+  @HttpCode(200)
+  async confirm(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
     @Body() body: unknown,
   ) {
     return success(await this.service.confirm(user, id, body));
   }
-  @Get("download-url") async download(
+
+  @Get("download-url")
+  async download(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
   ) {
     return success(await this.service.download(user, id));
   }
-  @Delete() async delete(
+
+  @Delete()
+  async delete(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
   ) {

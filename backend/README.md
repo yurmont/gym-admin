@@ -100,3 +100,9 @@ Each feature lives under src/modules/: auth, profiles, members, membership-plans
 Membership, payment and attendance business operations live in feature-local *.transactions.ts files. They share an authorized transaction context, tenant locking and database clock through common/business/business-transactions.service.ts. Membership payment creation calls the payment transaction function using the same SQL transaction; it does not open a nested transaction.
 
 Repositories contain feature reads and lookups. Database connection and allowlisted member/plan persistence are shared in database/. Filters, HTTP envelopes, validation and logging have dedicated common/ subfolders. app.module.ts wires modules; main.ts and application.ts configure startup and HTTP behavior.
+
+## Readable formatting
+
+npm run format runs scripts/format-source.mjs before Prettier. The source formatter adds blank lines between methods, puts non-parameter decorators on separate lines, and formats static SQL strings with the existing PostgreSQL formatter. SQL formatting verifies that the non-whitespace tokens remain unchanged. Dynamic SQL templates must be wrapped manually, preserving interpolation and parameter order.
+
+npm run format:check verifies these layout rules and Prettier formatting without changing files. CI uses this command, so passing Prettier alone is insufficient. The configuration keeps an 80-column print width; long string literals need explicit line breaks because print width is not a hard limit for strings.

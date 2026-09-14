@@ -28,10 +28,12 @@ const objects = {
       expires_at: new Date(Date.now() + 300000).toISOString(),
     };
   },
+
   async metadata(path) {
     if (!files.has(path)) throw new Error("internal-bucket-secret");
     return files.get(path);
   },
+
   async delete(path) {
     files.delete(path);
   },
@@ -427,7 +429,7 @@ test("storage and database failures do not leak infrastructure details", () =>
     );
     assert.equal(r.status, 500);
     assert.ok(!JSON.stringify(r.body).includes("secret"));
-    await db.query("select 1");
+    await db.query(`select 1`);
     const { DatabaseService } = require("../dist/database/database.service");
     const database = app.get(DatabaseService),
       original = database.query;

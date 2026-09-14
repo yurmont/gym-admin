@@ -7,7 +7,8 @@ import { success } from "../../common/http/success";
 @Controller("api/v1")
 @UseGuards(FirebaseAuthGuard)
 export class ProfilesController {
-  @Get("me") me(@CurrentUser() user: AuthenticatedUser) {
+  @Get("me")
+  me(@CurrentUser() user: AuthenticatedUser) {
     return success(user);
   }
 }

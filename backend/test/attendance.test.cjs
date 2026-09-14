@@ -107,7 +107,7 @@ const fixture_cjs_1 = require("./fixture.cjs");
     (0, fixture_cjs_1.withFixture)(async ({ create, run, db }) => {
       const id = await create({ pay_now: true });
       await db.query(
-        "update public.memberships set status='congelada' where id=$1",
+        `update public.memberships set status = 'congelada' where id = $1`,
         [id],
       );
       (0, expect_1.expect)(
@@ -118,9 +118,10 @@ const fixture_cjs_1 = require("./fixture.cjs");
   (0, node_test_1.it)("denies removed members", () =>
     (0, fixture_cjs_1.withFixture)(async ({ create, run, db, fixture }) => {
       await create({ pay_now: true });
-      await db.query("update public.members set status='baja' where id=$1", [
-        fixture.member,
-      ]);
+      await db.query(
+        `update public.members set status = 'baja' where id = $1`,
+        [fixture.member],
+      );
       (0, expect_1.expect)(
         (await run("attendance-check-in", { identifier: "TEST-A" })).reason,
       ).toBe("El socio está dado de baja");
@@ -132,7 +133,7 @@ const fixture_cjs_1 = require("./fixture.cjs");
       (0, fixture_cjs_1.withFixture)(async ({ create, run, row, db }) => {
         const id = await create({ pay_now: true });
         await db.query(
-          "update public.memberships set sessions_used=2 where id=$1",
+          `update public.memberships set sessions_used = 2 where id = $1`,
           [id],
         );
         (0, expect_1.expect)(
@@ -147,7 +148,11 @@ const fixture_cjs_1 = require("./fixture.cjs");
     (0, fixture_cjs_1.withFixture)(async ({ create, run, db, fixture }) => {
       await create({ pay_now: true });
       await db.query(
-        "update public.membership_plans set access_from=(localtime + interval '1 hour')::time,access_to=(localtime + interval '1 hour')::time where id=$1",
+        `update public.membership_plans
+        set
+          access_from = (localtime + interval '1 hour')::time,
+          access_to = (localtime + interval '1 hour')::time
+        where id = $1`,
         [fixture.plan],
       );
       (0, expect_1.expect)(
@@ -175,9 +180,10 @@ const fixture_cjs_1 = require("./fixture.cjs");
   );
   (0, node_test_1.it)("ignores soft-deleted members", () =>
     (0, fixture_cjs_1.withFixture)(async ({ run, db, fixture }) => {
-      await db.query("update public.members set deleted_at=now() where id=$1", [
-        fixture.member,
-      ]);
+      await db.query(
+        `update public.members set deleted_at = now() where id = $1`,
+        [fixture.member],
+      );
       await (0, expect_1.expect)(
         run("attendance-check-in", { identifier: "TEST-A" }),
       ).rejects.toThrow("No se encontró un socio");
@@ -203,7 +209,9 @@ const fixture_cjs_1 = require("./fixture.cjs");
             Number(
               (
                 await db.query(
-                  "select count(*) from public.attendances where tenant_id=$1 and result='permitido'",
+                  `select count(*)
+                  from public.attendances
+                  where tenant_id = $1 and result = 'permitido'`,
                   [fixture.tenant],
                 )
               )[0].count,

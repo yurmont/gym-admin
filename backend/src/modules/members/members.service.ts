@@ -9,9 +9,11 @@ import { memberSchema } from "./dto/members.schemas";
 @Injectable()
 export class MembersService {
   constructor(private readonly repo: MembersRepository) {}
+
   members(user: AuthenticatedUser, q?: string) {
     return this.repo.members(user.tenant, q);
   }
+
   saveMember(user: AuthenticatedUser, input: unknown, id?: string) {
     requireManager(user);
     return this.repo.save(user.tenant, parse(memberSchema, input), id);

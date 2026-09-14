@@ -27,7 +27,10 @@ async function seed(db) {
     ].map((key) => [key, crypto.randomUUID()]),
   );
   await db.query(
-    "insert into public.tenants (id,name,slug) values ($1,'Service test A',$2),($3,'Service test B',$4)",
+    `insert into public.tenants (id, name, slug)
+    values
+      ($1, 'Service test A', $2),
+      ($3, 'Service test B', $4)`,
     [ids.tenant, ids.tenant, ids.otherTenant, ids.otherTenant],
   );
   for (const [key, role, active, tenant] of [
@@ -38,7 +41,9 @@ async function seed(db) {
     ["otherAdmin", "admin", true, ids.otherTenant],
   ]) {
     await db.query(
-      "insert into public.profiles (id,firebase_uid,tenant_id,full_name,role,is_active) values ($1,$2,$3,'Service test',$4,$5)",
+      `insert into public.profiles
+        (id, firebase_uid, tenant_id, full_name, role, is_active)
+      values ($1, $2, $3, 'Service test', $4, $5)`,
       [ids[key], ids[key], tenant, role, active],
     );
   }
@@ -48,15 +53,20 @@ async function seed(db) {
     ["noMembership", ids.tenant, "TEST-NONE"],
   ]) {
     await db.query(
-      "insert into public.members (id,tenant_id,code,first_name,last_name) values ($1,$2,$3,'Test','Member')",
+      `insert into public.members (id, tenant_id, code, first_name, last_name)
+      values ($1, $2, $3, 'Test', 'Member')`,
       [ids[key], tenant, code],
     );
   }
   await db.query(
-    "insert into public.membership_plans (id,tenant_id,name,price,duration_days,sessions_included) values ($1,$2,'Plan A',100,30,2),($3,$4,'Plan B',100,30,null)",
+    `insert into public.membership_plans
+      (id, tenant_id, name, price, duration_days, sessions_included)
+    values
+      ($1, $2, 'Plan A', 100, 30, 2),
+      ($3, $4, 'Plan B', 100, 30, null)`,
     [ids.plan, ids.tenant, ids.otherPlan, ids.otherTenant],
   );
-  const [clock] = await db.query("select current_date::text as today");
+  const [clock] = await db.query(`select current_date::text as today`);
   return { ...ids, today: String(clock.today) };
 }
 function helpers(db, database, fixture) {
@@ -132,7 +142,7 @@ async function withCommittedFixture(run) {
   } finally {
     if (fixture)
       await database.transaction(async (db) => {
-        await db.query("delete from public.tenants where id=$1 or id=$2", [
+        await db.query(`delete from public.tenants where id = $1 or id = $2`, [
           fixture.tenant,
           fixture.otherTenant,
         ]);

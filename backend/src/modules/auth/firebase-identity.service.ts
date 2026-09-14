@@ -20,6 +20,7 @@ export class FirebaseIdentity {
       );
     this.auth = getAuth(app);
   }
+
   async verify(token: string) {
     return this.auth.verifyIdToken(token, true);
   }

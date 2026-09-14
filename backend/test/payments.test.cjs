@@ -34,7 +34,7 @@ const fixture_cjs_1 = require("./fixture.cjs");
       (0, fixture_cjs_1.withFixture)(
         async ({ create, pay, row, fixture, db }) => {
           await db.query(
-            "update public.membership_plans set price=0.30 where id=$1",
+            `update public.membership_plans set price = 0.30 where id = $1`,
             [fixture.plan],
           );
           const id = await create();

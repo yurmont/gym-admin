@@ -15,6 +15,7 @@ export class FirebaseAuthGuard implements CanActivate {
     private readonly identity: FirebaseIdentity,
     private readonly users: ProfilesRepository,
   ) {}
+
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<AuthRequest>();
     const match = /^Bearer ([^\s]+)$/i.exec(

@@ -11,7 +11,8 @@ import { DashboardQuery } from "./dto/dashboard-query.dto";
 export class DashboardController {
   constructor(private readonly service: DashboardService) {}
 
-  @Get("dashboard") async dashboard(
+  @Get("dashboard")
+  async dashboard(
     @CurrentUser() user: AuthenticatedUser,
     @Query() query: DashboardQuery,
   ) {

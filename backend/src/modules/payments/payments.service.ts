@@ -17,9 +17,11 @@ export class PaymentsService {
     private readonly membershipsRepo: MembershipsRepository,
     private readonly transactions: BusinessTransactions,
   ) {}
+
   payments(user: AuthenticatedUser) {
     return this.repo.payments(user.tenant);
   }
+
   async paymentOptions(user: AuthenticatedUser) {
     const [members, memberships] = await Promise.all([
       this.membersRepo.memberOptions(user.tenant),
@@ -27,11 +29,13 @@ export class PaymentsService {
     ]);
     return { members, memberships };
   }
+
   create(input: unknown, user: AuthenticatedUser) {
     requireManager(user);
     const body = parse(schemas["register-payment"], input);
     return this.transactions.run(user, (ctx) => registerPayment(ctx, body));
   }
+
   void(input: unknown, user: AuthenticatedUser) {
     requireManager(user);
     const body = parse(schemas["void-payment"], input);

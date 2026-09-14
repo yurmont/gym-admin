@@ -34,29 +34,61 @@ export async function checkIn(
 ) {
   const person = await required(
     ctx.db,
-    "select * from public.members where tenant_id=$1 and deleted_at is null and (code=$2 or document_number=$2) limit 1",
+    `select *
+    from public.members
+    where
+      tenant_id = $1
+      and deleted_at is null
+      and (code = $2 or document_number = $2)
+    limit 1`,
     [ctx.tenant, input.identifier],
     "No se encontró un socio con ese código o documento",
   );
   const existing = await ctx.db.query(
-    "select id from public.attendances where tenant_id=$1 and member_id=$2 and result='permitido' and check_out is null and check_in::date=current_date",
+    `select id
+    from public.attendances
+    where
+      tenant_id = $1
+      and member_id = $2
+      and result = 'permitido'
+      and check_out is null
+      and check_in::date = current_date`,
     [ctx.tenant, person.id],
   );
   if (existing.length) throw new Error("El socio ya registró su ingreso");
   const [ms] = await ctx.db.query(
-    "select *,end_date::text from public.memberships where tenant_id=$1 and member_id=$2 and status in ('activa','pendiente_pago','congelada') order by public.memberships.end_date desc limit 1 for update",
+    `select *, end_date::text
+    from public.memberships
+    where
+      tenant_id = $1
+      and member_id = $2
+      and status in ('activa', 'pendiente_pago', 'congelada')
+    order by public.memberships.end_date desc
+    limit 1
+    for update`,
     [ctx.tenant, person.id],
   );
   const [plan] = ms
     ? await ctx.db.query(
-        "select * from public.membership_plans where id=$1 and tenant_id=$2",
+        `select * from public.membership_plans where id = $1 and tenant_id = $2`,
         [ms.membership_plan_id, ctx.tenant],
       )
     : [];
   const reason = attendanceDenial(person, ms, plan, ctx.today, ctx.time);
   const id = crypto.randomUUID();
   await ctx.db.query(
-    "insert into public.attendances (id,tenant_id,member_id,membership_id,method,result,denied_reason,user_id) values ($1,$2,$3,$4,$5,$6,$7,$8)",
+    `insert into public.attendances
+      (
+        id,
+        tenant_id,
+        member_id,
+        membership_id,
+        method,
+        result,
+        denied_reason,
+        user_id
+      )
+    values ($1, $2, $3, $4, $5, $6, $7, $8)`,
     [
       id,
       ctx.tenant,
@@ -70,7 +102,9 @@ export async function checkIn(
   );
   if (!reason && plan?.sessions_included != null)
     await ctx.db.query(
-      "update public.memberships set sessions_used=sessions_used+1 where id=$1 and tenant_id=$2",
+      `update public.memberships
+      set sessions_used = sessions_used + 1
+      where id = $1 and tenant_id = $2`,
       [ms!.id, ctx.tenant],
     );
   return {
@@ -86,11 +120,18 @@ export async function checkOut(
 ) {
   const attendance = await required(
     ctx.db,
-    "select check_in from public.attendances where id=$1 and tenant_id=$2 and result='permitido' and check_out is null for update",
+    `select check_in
+    from public.attendances
+    where
+      id = $1
+      and tenant_id = $2
+      and result = 'permitido'
+      and check_out is null
+    for update`,
     [input.attendance_id, ctx.tenant],
     "Registro de ingreso no disponible",
   );
-  const [clock] = await ctx.db.query("select now() as now");
+  const [clock] = await ctx.db.query(`select now() as now`);
   const minutes = Math.max(
     0,
     Math.round(
@@ -100,7 +141,11 @@ export async function checkOut(
     ),
   );
   await ctx.db.query(
-    "update public.attendances set check_out=now(),minutes_stayed=$1 where id=$2 and tenant_id=$3",
+    `update public.attendances
+    set
+      check_out = now(),
+      minutes_stayed = $1
+    where id = $2 and tenant_id = $3`,
     [minutes, input.attendance_id, ctx.tenant],
   );
   return input.attendance_id;

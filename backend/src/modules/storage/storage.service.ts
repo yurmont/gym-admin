@@ -15,9 +15,11 @@ export class StorageService {
     private readonly repo: PhotosRepository,
     private readonly objects: GcsObjects,
   ) {}
+
   private prefix(user: AuthenticatedUser, id: string) {
     return `${user.tenant}/members/${id}/`;
   }
+
   private validatePath(user: AuthenticatedUser, id: string, input: unknown) {
     const { path } = parse(
       z.object({
@@ -32,6 +34,7 @@ export class StorageService {
     );
     return path;
   }
+
   async upload(user: AuthenticatedUser, id: string, input: unknown) {
     requireManager(user);
     await this.repo.member(user.tenant, id);
@@ -52,6 +55,7 @@ export class StorageService {
       },
     };
   }
+
   async confirm(user: AuthenticatedUser, id: string, input: unknown) {
     requireManager(user);
     await this.repo.member(user.tenant, id);
@@ -67,12 +71,14 @@ export class StorageService {
     await this.repo.attach(user.tenant, id, path);
     return { path };
   }
+
   async download(user: AuthenticatedUser, id: string) {
     const member = await this.repo.member(user.tenant, id);
     if (!member.photo_path) throw new NotFoundException("Foto no disponible");
     const path = this.validatePath(user, id, { path: member.photo_path });
     return this.objects.sign(path, "read");
   }
+
   async delete(user: AuthenticatedUser, id: string) {
     requireManager(user);
     const member = await this.repo.member(user.tenant, id);

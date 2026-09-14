@@ -8,12 +8,17 @@ export class MembershipPlansRepository {
     private readonly db: DatabaseService,
     private readonly writes: TenantWritesRepository,
   ) {}
+
   plans(tenant: string) {
     return this.db.query(
-      "select * from public.membership_plans where tenant_id=$1 order by sort_order,id",
+      `select *
+      from public.membership_plans
+      where tenant_id = $1
+      order by sort_order, id`,
       [tenant],
     );
   }
+
   save(tenant: string, payload: Record<string, unknown>, id?: string) {
     return this.writes.save("membership_plans", tenant, payload, id);
   }

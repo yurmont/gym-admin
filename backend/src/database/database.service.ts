@@ -26,6 +26,7 @@ export function connectDatabase(url: string, max = 3) {
   return {
     query: async (text: string, values: unknown[] = []): Promise<Row[]> =>
       (await pool.query(text, values)).rows,
+
     async transaction<T>(run: (db: Connection) => Promise<T>): Promise<T> {
       const client = await pool.connect();
       try {
@@ -47,6 +48,7 @@ export function connectDatabase(url: string, max = 3) {
         client.release();
       }
     },
+
     close: () => pool.end(),
   };
 }
@@ -61,12 +63,15 @@ export class DatabaseService
       config.get<number>("DB_POOL_MAX", 3),
     );
   }
+
   query(text: string, values?: unknown[]) {
     return this.client.query(text, values);
   }
+
   transaction<T>(run: (db: Connection) => Promise<T>) {
     return this.client.transaction(run);
   }
+
   async onApplicationShutdown() {
     await this.client.close();
   }

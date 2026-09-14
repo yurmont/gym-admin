@@ -9,13 +9,16 @@ import { planSchema, planStatusSchema } from "./dto/membership-plans.schemas";
 @Injectable()
 export class MembershipPlansService {
   constructor(private readonly repo: MembershipPlansRepository) {}
+
   plans(user: AuthenticatedUser) {
     return this.repo.plans(user.tenant);
   }
+
   savePlan(user: AuthenticatedUser, input: unknown, id?: string) {
     requireManager(user);
     return this.repo.save(user.tenant, parse(planSchema, input), id);
   }
+
   togglePlan(user: AuthenticatedUser, input: unknown, id: string) {
     requireManager(user);
     return this.repo.save(user.tenant, parse(planStatusSchema, input), id);

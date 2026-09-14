@@ -22,9 +22,11 @@ export class MembershipsService {
     private readonly plansRepo: MembershipPlansRepository,
     private readonly transactions: BusinessTransactions,
   ) {}
+
   memberships(user: AuthenticatedUser) {
     return this.repo.memberships(user.tenant);
   }
+
   async membershipOptions(user: AuthenticatedUser) {
     const [members, plans] = await Promise.all([
       this.membersRepo.memberOptions(user.tenant),
@@ -32,16 +34,19 @@ export class MembershipsService {
     ]);
     return { members, plans: plans.filter((p) => p.is_active) };
   }
+
   create(input: unknown, user: AuthenticatedUser) {
     requireManager(user);
     const body = parse(schemas["create-membership"], input);
     return this.transactions.run(user, (ctx) => createMembership(ctx, body));
   }
+
   renew(input: unknown, user: AuthenticatedUser) {
     requireManager(user);
     const body = parse(schemas["renew-membership"], input);
     return this.transactions.run(user, (ctx) => renewMembership(ctx, body));
   }
+
   cancel(input: unknown, user: AuthenticatedUser) {
     requireManager(user);
     const body = parse(schemas["cancel-membership"], input);

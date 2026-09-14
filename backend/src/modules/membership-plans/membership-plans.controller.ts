@@ -19,23 +19,29 @@ import { MembershipPlansService } from "./membership-plans.service";
 @UseGuards(FirebaseAuthGuard)
 export class MembershipPlansController {
   constructor(private readonly service: MembershipPlansService) {}
-  @Get() async list(@CurrentUser() user: AuthenticatedUser) {
+
+  @Get()
+  async list(@CurrentUser() user: AuthenticatedUser) {
     return success(await this.service.plans(user));
   }
-  @Post() @HttpCode(200) async create(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() body: unknown,
-  ) {
+
+  @Post()
+  @HttpCode(200)
+  async create(@CurrentUser() user: AuthenticatedUser, @Body() body: unknown) {
     return success(await this.service.savePlan(user, body));
   }
-  @Patch(":id") async update(
+
+  @Patch(":id")
+  async update(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
     @Body() body: unknown,
   ) {
     return success(await this.service.savePlan(user, body, id));
   }
-  @Patch(":id/status") async status(
+
+  @Patch(":id/status")
+  async status(
     @CurrentUser() user: AuthenticatedUser,
     @Param("id", new ParseUUIDPipe()) id: string,
     @Body() body: unknown,
