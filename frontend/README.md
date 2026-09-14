@@ -38,3 +38,9 @@ npx firebase-tools deploy --only hosting --project PROJECT
 firebase.json serves out/ with static routes and headers. No SSR server is deployed. Public environment values are embedded during the build; changing them requires rebuilding.
 
 This directory can be copied into a separate repository and installed, checked and built independently.
+
+## File ownership
+
+Paths in this guide are relative to frontend/. Routes live in src/app/, reusable UI in src/components/, feature views in src/features/ and browser integration code in src/lib/. The preview script is scripts/serve-frontend.mjs. Next.js, Tailwind, PostCSS and TypeScript configuration remain at this application's root.
+
+Both package.json and package-lock.json belong here. Formatting uses this directory's .prettierrc.json and .prettierignore. CI is defined at ../.github/workflows/frontend.yml in the combined repository.

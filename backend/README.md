@@ -86,3 +86,9 @@ Cloud Run collects JSON stdout logs in Cloud Logging. Request entries include ge
 In Cloud Monitoring configure alerts for 5xx rates, request latency, container restarts and max-instance saturation; monitor Neon connection/transaction metrics separately. Dashboards and alert policies must be created during infrastructure provisioning.
 
 Before declaring the cloud deployment ready, verify real Firebase login/logout/refresh and revoked tokens, authorized and cross-tenant API access, Neon transactions, and actual GCS signed upload/confirmation/download/delete. Verify frontend deep links and missing-user access behavior. Automated local provider mocks cannot replace those live acceptance checks.
+
+## File ownership
+
+Paths in this guide are relative to backend/. Runtime code lives in src/, immutable schema migrations in migrations/, operational scripts in scripts/ and regression tests in test/. Local PostgreSQL configuration is compose.yaml, and local Auth Emulator configuration is firebase-emulators.json.
+
+Dockerfile and .dockerignore belong here; run docker build with this directory as its context. Both package.json and package-lock.json, as well as .prettierrc.json and .prettierignore, are application-local. CI is defined at ../.github/workflows/backend.yml in the combined repository.

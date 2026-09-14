@@ -6,7 +6,7 @@ Install frontend and backend independently with npm ci in each folder. Run build
 
 1. Configure frontend/.env.local from frontend/.env.example with public Firebase settings and an API URL ending in /api/v1.
 2. Configure backend/.env from backend/.env.example with server-only database settings and the same Firebase project. Preserve existing Neon credentials.
-3. For a local database run docker compose -f backend/compose.yaml up -d postgres. Run migrations only against the database you intend to initialize.
+3. From the repository root, start a local database with `docker compose -f backend/compose.yaml up -d postgres`. Run migrations only against the database you intend to initialize.
 4. From backend/, start the Auth Emulator:
 
 ```sh
