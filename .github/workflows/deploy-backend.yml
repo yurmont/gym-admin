@@ -1,0 +1,74 @@
+name: Deploy backend
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - backend/**
+      - .github/workflows/deploy-backend.yml
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: yurmont-systems
+      GCP_REGION: ${{ vars.GCP_REGION }}
+      ARTIFACT_REGISTRY_REPOSITORY: ${{ vars.ARTIFACT_REGISTRY_REPOSITORY }}
+      CLOUD_RUN_SERVICE: gym-api
+      CLOUD_RUN_SERVICE_ACCOUNT: gym-api@yurmont-systems.iam.gserviceaccount.com
+      DATABASE_URL_SECRET: ${{ vars.DATABASE_URL_SECRET }}
+      GCS_BUCKET_NAME: ${{ vars.GCS_BUCKET_NAME }}
+      CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
+      IMAGE_TAG: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Validate backend
+        working-directory: backend
+        run: |
+          npm ci
+          npm run format:check
+          npm run typecheck
+          npm test
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${GCP_REGION}-docker.pkg.dev --quiet
+
+      - name: Build and push image
+        working-directory: backend
+        run: |
+          IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPOSITORY}/gym-api:${IMAGE_TAG}"
+          docker build -t "${IMAGE}" .
+          docker push "${IMAGE}"
+          echo "IMAGE=${IMAGE}" >> "${GITHUB_ENV}"
+
+      - name: Deploy Cloud Run
+        run: |
+          gcloud run deploy "${CLOUD_RUN_SERVICE}" \
+            --image "${IMAGE}" \
+            --region "${GCP_REGION}" \
+            --service-account "${CLOUD_RUN_SERVICE_ACCOUNT}" \
+            --allow-unauthenticated \
+            --set-secrets "DATABASE_URL=${DATABASE_URL_SECRET}" \
+            --set-env-vars "^|^FIREBASE_PROJECT_ID=${GCP_PROJECT_ID}|GCS_BUCKET_NAME=${GCS_BUCKET_NAME}|CORS_ORIGINS=${CORS_ORIGINS}|DB_POOL_MAX=3" \
+            --max-instances 5 \
+            --concurrency 20
